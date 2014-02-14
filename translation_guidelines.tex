@@ -1,0 +1,94 @@
+\documentclass[a4paper,10pt]{article}
+%\documentclass[a4paper,10pt]{scrartcl}
+
+\usepackage[utf8]{inputenc}
+\usepackage[czech]{babel}
+\usepackage{fullpage}
+
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{listings}
+\usepackage{dtsyntax} % https://code.google.com/p/dtsyntax/
+\usepackage{color}
+\usepackage{array,ragged2e}
+
+
+\lstset{ %
+  backgroundcolor=\color{white},   % choose the background color; you must add \usepackage{color} or \usepackage{xcolor}
+  basicstyle=\footnotesize,        % the size of the fonts that are used for the code
+  breakatwhitespace=false,         % sets if automatic breaks should only happen at whitespace
+  breaklines=true,                 % sets automatic line breaking
+  captionpos=b,                    % sets the caption-position to bottom
+  commentstyle=\color{mygreen},    % comment style
+  deletekeywords={}   ,            % if you want to delete keywords from the given language
+  escapeinside={\%*}{*)},          % if you want to add LaTeX within your code
+  extendedchars=true,              % lets you use non-ASCII characters; for 8-bits encodings only, does not work with UTF-8
+  frame=none,                      % disables frame around the code
+  keepspaces=true,                 % keeps spaces in text, useful for keeping indentation of code (possibly needs columns=flexible)
+  keywordstyle=\color{blue},       % keyword style
+  language=Octave,                 % the language of the code
+  morekeywords={},                 % if you want to add more keywords to the set
+  numbers=left,                    % where to put the line-numbers; possible values are (none, left, right)
+  numbersep=5pt,                   % how far the line-numbers are from the code
+  numberstyle=\tiny\color{gray},   % the style that is used for the line-numbers
+  rulecolor=\color{black},         % if not set, the frame-color may be changed on line-breaks within not-black text (e.g. comments (green here))
+  showspaces=false,                % show spaces everywhere adding particular underscores; it overrides 'showstringspaces'
+  showstringspaces=false,          % underline spaces within strings only
+  showtabs=false,                  % show tabs within strings adding particular underscores
+  stepnumber=1,                    % the step between two line-numbers. If it's 1, each line will be numbered
+  stringstyle=\color{mauve},       % string literal style
+  tabsize=2,                       % sets default tabsize to 2 spaces
+  title=\lstname                   % show the filename of files included with \lstinputlisting; also try caption instead of title
+}
+
+
+\title{Python to modelica translation guidelines draft}
+\author{Jáchym Barvínek}
+\date{}
+
+\pdfinfo{%
+  /Title    ()
+  /Author   ()
+  /Creator  ()
+  /Producer ()
+  /Subject  ()
+  /Keywords ()
+}
+
+\begin{document}
+\maketitle
+
+\paragraph{Type correspondences}
+A table showing which types should be translated to which.
+\begin{center}
+\begin{tabular}{|l|l|}
+\hline
+Python type & Modelica type \\
+\hline
+\tt float & \tt Real \\
+\tt int & \tt Integer \\
+\hline
+\end{tabular}
+\end{center}
+
+
+\paragraph{Function parameters and return values}
+For each parameter in the python function, we create a corresponding {\tt input} entry in the modelica code with the same name.
+Python function parameters are not strictly typed and the type cannot be inferred in general. 
+We will be dealing mainly with arithmetical a numerical calculations and for this reason and sake of simplicity, we well assume
+that the type is {\tt Real} in cases where it cannot be inferred.
+We won't translate functions with unknown numbers of parameters now. (The {\tt *} and {\tt **} operators in python.)
+
+Example: test\_0008
+
+Return values: Python functions return one value of unspecified type. Thus, the type must be inferred.
+(Taking the chosen parameter types into account.) We'll assume it's a {\tt Real} as long as the computation is valid.
+If the return value is a local variable (but nut parameter!), we shall make a corresponding {\tt output}
+entry in the translation for this variable. If it's an expression or parameter, we make a new variable.
+This variable is called {\tt return\_value} in the tests, another name may be chosen but note that it's necessary to
+check whether this is not also a name of a local variable or a parameter. In this case, another name must be chosen.
+
+Examples: test\_0001, test\_0002
+
+\end{document}
