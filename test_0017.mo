@@ -4,7 +4,9 @@ function transform0017
   algorithm
     return_value := m;
     return_value := return_value - {{1,2},{3,4},{5,6}};
-    return_value := return_value - {{7,7},{7,7},{7,7}};
+    for local_variable0 in 1:3 loop
+      return_value[local_variable0] := return_value[local_variable0] - {7,7};
+    end for;
     return_value := return_value / 2;
 
 end transform0017;

@@ -1,5 +1,12 @@
 *.log
 *.c
+*.h
+*.makefile
+*.libs
 *.so
 *.o
-
+*.aux
+*.backup
+*.png
+hours.txt
+__pycache__

@@ -12,6 +12,8 @@
 \usepackage{dtsyntax} % https://code.google.com/p/dtsyntax/
 \usepackage{color}
 \usepackage{array,ragged2e}
+\usepackage{tabularx}
+
 
 
 \lstset{ %
@@ -90,5 +92,128 @@ This variable is called {\tt return\_value} in the tests, another name may be ch
 check whether this is not also a name of a local variable or a parameter. In this case, another name must be chosen.
 
 Examples: test\_0001, test\_0002
+
+\paragraph{Local variables}
+In modelica, there is an ambiguity, where values of local variables can be first assigned. It can be either in the
+{\tt protected} or the {\tt algorithm} section. I decided to only declare the names in {\tt protected} and
+assign them in {\tt algorithm}. This makes the code a bit longer, but I thought it could make the translation of the
+algorithm : bit more straightforward.
+
+Example: test\_0006
+
+\paragraph{Side effects}
+In contrast to modelica, functions in python may normally have side effects. A notable example is assignment to arrays.
+I suggest to solve this by tracking which parameters might be potentially affected by this and adding extra
+output value to the translated function containing the modified parameter.
+In the tests, the prefix {\tt modified\_} for the variable name, but again it must be checked that the name is not used
+elsewhere.
+In the context outside the single function, the translator must also take this into consideration.
+In the tests, the variable is tracked up to redefinition and then assigned the current value there. If it's not redefined
+or there is no return value, it's tracked in the whole body of the function.
+
+Examples: test\_0014, test\_0015
+
+Important note. The arithmetic-assignment operators in python cause side-effects. But assignment to an arithmetic expression
+does not. For example:
+If {\tt a} is an array and a parameter of a function in Python which was not redefined, the code {\tt a = a + x} does not
+change it's original value (but redefines values), but the code {\tt a += x} does change original and doesn't redefine locally!
+
+Example: test\_0018
+
+
+\paragraph{Array size inference}
+When the translator recognizes a variable as array (or simply assumes that it's one), it needs to decide it't dimensions 
+and sizes in each dimension. In Python, if a operation works on an array of n dimensions, it may also work on array 
+of any higher dimension. But in basic modelica array semantics, it's not easily possible to handle arrays with dynamic
+number of dimensions. Thus, the translation assumes the lowest possible dimension that makes sense according to 
+arithmetical operations found in the algorithm (but at least one, zero dimension only in explicit cases like
+{\tt numpy.array([])} or {\tt numpy.empty((0,))}.) If the arithmetical operations do not provide any evidence, that
+the variable (or parameter) is an array, it should be assumed to be a scalar number. If sizes of the array in some
+dimensions cannot be inferred from arithmetical operations, they shall be unknown (i.e. {\tt [:]} in Modelica). 
+We do not know any good way to translate a function which takes as parameter an array of number of dimensions which
+cannot be inferred (or lower bounded). Now, the translator should issue an error when it detects such situation.
+
+Examples: test\_0007, test\_0013.
+
+One important things to note is that some arithmetical operations on arrays cannot be translated in a straightforward 
+way, for example, modelica does not support addition of arrays of different dimensions but in python it's possible
+under certain conditions. The translator must take care of this. For example: {\tt numpy.array([[1,2],[3,4]]) + numpy.array([7,5])}
+results to {\tt array([[8,7],[10,9]])}. In the translation, I solve it with a for loop. 
+
+Examples: test\_0017, test\_0019
+
+Note also, that in python, although {\tt numpy} arrays have fixed size, the variable that contains them 
+
+\paragraph{Anonymous functions}
+Anonymous ({\tt lambda}) functions are taken out of the surrounding function and translated as normal function with a generated name.
+
+Example: test\_0020.
+
+\paragraph{Lists (MetaModelica)} Lists in python can be heterogeneous, i.e. a single list can contain elements of various types.
+In practice, and especially regarding numerical computations on which we focus, lists are most often homogeneous, though.
+Translating heterogeneous lists would be possible in theory, but it would be very complicated and probably resulted in
+swollen code. Let's assume, that lists in code we translate are homogeneous. If the type of a list cannot be inferred from
+the function code, we shall assume that it's float. If there is a certainty, that the list is heterogeneous, the translator
+may try another strategy (such as converting the list to tuple, but that may cause other problems) otherwise it should
+issue an error.
+
+
+TODO multidimensional lists, list index assignment, slicing. Problem: Some basic constructs cannot be translated using builtin MetaModelica
+functions on lists.
+
+\paragraph{Lists (MetaModelica)} 
+It may be sometimes impossible to determine, if a variable is a {\tt list} or a {\tt tuple} or {\tt numpy.array}. In that case,
+it should be assumed to be {\tt numpy.array}.
+
+
+\paragraph{}
+
+\paragraph{Built-in functions} This table shows correspondence between builtin functions and basic language constructs used 
+in the tests.
+\newline
+\begin{tabularx}{\textwidth}{|l|l|p{5cm}|}
+\hline
+Python & Modelica & Notes \\
+\hline
+\tt range(a,b,c) & \tt (a:c:b+1) & \\
+\tt range(a,b) & \tt (a:b+1) & \\
+\tt range(a) & \tt (0:a+1) & \\
+\tt numpy.arange &  & same as \tt range \\
+\tt for x in z: --- & \tt for x in z loop --- end for;& {\tt x}, {\tt z} and the block {\tt ---} must be translated \\
+\tt while b: --- & \tt while b loop --- end while;& {\tt b} and the block {\tt ---} must be translated \\
+\tt \vtop{\hbox{if b1: ---} \hbox{elseif b2: ---} \hbox{else: ---}}& \tt \vtop{\hbox{if b1 then ---}\hbox{elseif b2 then ---}\hbox{else --- end if;}} & {\strut{\tt b1}, {\tt b2} and the corresponding blocks {\tt ---} must be translated} \\
+\tt numpy.ones((a,b,c,...)) & \tt ones(a,b,c,...) & \\
+\tt numpy.ones([a,b,c,...]) & \tt ones(a,b,c,...) & Alternative syntax.\\
+\tt numpy.zeros((a,b,c,...)) & \tt zeros(a,b,c,...) & \\
+\tt numpy.zeros([a,b,c,...]) & \tt zeros(a,b,c,...) & Alternative syntax.\\
+\tt numpy.empty((a,b,c,...)) &  & Array of given dimensions is only declared! \\
+\tt numpy.empty([a,b,c,...]) &  & Alternative syntax.\\
+\tt numpy.dot(a,b) & \tt a*b & Matrix product.  \\
+\tt a.dot(b) & \tt a*b & Alternative syntax.  \\
+\tt numpy.array & \tt  & array constructor \\
+\tt numpy.concatenate((a,b,...), z) & \tt cat(z,a,b,...) & parameter {\tt z} may be omitted in python or given as {\tt axis=z} \\
+\tt numpy.concatenate([a,b,...], z) & \tt cat(z,a,b,...) & Alternative syntax. \\
+\tt m.fill(v) & \tt m := fill(v, a,b,...) & Where {\tt a,b,...} are dimensions of array {\tt m}. \\
+\tt numpy.sum(x) & \tt sum(x) & \\
+\tt numpy.product(x) & \tt product(x) & \\
+\tt [x][y] & \tt [x,y] & Indexing (general) \\
+\tt [x,y] & \tt [x,y] & Indexing ({\tt numpy} arrays only) \\
+\tt :a & \tt 1:a & Array slice indexing \\
+\tt a: & \tt (a+1):end & Array slice indexing \\
+\tt a:b & \tt (a+1):b & Array slice indexing \\
+\tt numpy.identity(n) & \tt identity(n) & \\
+\tt numpy.linspace(a,b,c) & \tt linspace(a,b,c) & \\
+\tt m.shape & \tt size(m) & \\
+\tt l.append(e) & \tt l := listAppend(l, \{e\}) & {\tt l} is a {\tt list}. \\
+\tt l1 + l2 & \tt listAppend(l1, l2) & {\tt l1},{\tt l2} are {\tt list}s. {\tt +=} Has side effect. \\ 
+\tt l1.extend(l2) & \tt l1 := listAppend(l1, l2) & Has side effect. \\ 
+
+\tt del lst[i] & \tt listDelete(lst, i) & Has side effect. \\
+\tt len(lst) & \tt listLength(lst) & Assuming {\tt lst} is a {\tt list}, not a {\tt numpy.array}! \\
+\tt lst[i] & \tt listGet(lst, i-1) & Also assuming {\tt i >= 0}. \\
+\tt lst[-i] & \tt listGet(lst, listLength(lst)-i+1) & \\
+\tt x in lst & \tt listMember(x, lst) & Different semantics of {\tt in} than in {\tt for} loop statement. \\
+\hline
+\end{tabularx}
 
 \end{document}

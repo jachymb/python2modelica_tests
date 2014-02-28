@@ -5,4 +5,4 @@
 
 def add0002(a, b):
     result = a + b
-    return retusl
+    return result

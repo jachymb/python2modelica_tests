@@ -7,10 +7,10 @@
 from numpy import ones,array,dot
 
 def transform0007(m):
-    m += ones((2,2)) # Adds 1 to each element of m.
+    m = m + ones((2,2)) # Adds 1 to each element of m.
                      # Alernative syntax: ones([2,2])
-    m += 1           # Again, adds 1 to each element.
+    m = m + 1           # Again, adds 1 to each element.
     m = dot(m, array(((1,0,1),(0,2,1))))
                      # Multipilies m by aother matrix
-                     # Alternative syntax: [[1,0],[0,2]]
+                     # Alternative syntax: [[1,0,1],[0,2,1]]
     return m
