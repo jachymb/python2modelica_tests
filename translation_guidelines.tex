@@ -161,8 +161,12 @@ issue an error.
 TODO multidimensional lists, list index assignment, slicing. Problem: Some basic constructs cannot be translated using builtin MetaModelica
 functions on lists.
 
-\paragraph{Lists (MetaModelica)} 
-It may be sometimes impossible to determine, if a variable is a {\tt list} or a {\tt tuple} or {\tt numpy.array}. In that case,
+\paragraph{Tuples (MetaModelica)} 
+Tuples in python are simillar to tuples in MetaModelica, but it might be difficult to determine their type, even the length may
+be uncertain. If the python code provides clues about the size and types, it's simply translated to corresponding tuple in MetaModelica.
+
+
+It may be sometimes impossible to determine, if a variable is a {\tt list} / {\tt tuple} or {\tt numpy.array}. In that case,
 it should be assumed to be {\tt numpy.array}.
 
 
@@ -179,7 +183,8 @@ Python & Modelica & Notes \\
 \tt range(a,b) & \tt (a:b+1) & \\
 \tt range(a) & \tt (0:a+1) & \\
 \tt numpy.arange &  & same as \tt range \\
-\tt for x in z: --- & \tt for x in z loop --- end for;& {\tt x}, {\tt z} and the block {\tt ---} must be translated \\
+\tt for x in z: --- & \tt for x in z loop --- end for;& {\tt x}, and the block {\tt ---} must be translated. {\tt z} is a {\tt range}. \\
+\tt for x in lst: --- & \tt \vtop{ \hbox{for local\_variablei in}\hbox{  (1:listLength(lst)) z loop} \hbox{x := listGet(lst, local\_variablei);} \hbox{--- end for;} } & {\tt l} is a  {\tt list}. \\
 \tt while b: --- & \tt while b loop --- end while;& {\tt b} and the block {\tt ---} must be translated \\
 \tt \vtop{\hbox{if b1: ---} \hbox{elseif b2: ---} \hbox{else: ---}}& \tt \vtop{\hbox{if b1 then ---}\hbox{elseif b2 then ---}\hbox{else --- end if;}} & {\strut{\tt b1}, {\tt b2} and the corresponding blocks {\tt ---} must be translated} \\
 \tt numpy.ones((a,b,c,...)) & \tt ones(a,b,c,...) & \\
