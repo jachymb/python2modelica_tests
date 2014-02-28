@@ -157,6 +157,7 @@ the function code, we shall assume that it's float. If there is a certainty, tha
 may try another strategy (such as converting the list to tuple, but that may cause other problems) otherwise it should
 issue an error.
 
+Examples: test\_0021,  test\_0022,  test\_0023,  test\_0024.
 
 TODO multidimensional lists, list index assignment, slicing. Problem: Some basic constructs cannot be translated using builtin MetaModelica
 functions on lists.
@@ -169,6 +170,8 @@ be uncertain. If the python code provides clues about the size and types, it's s
 It may be sometimes impossible to determine, if a variable is a {\tt list} / {\tt tuple} or {\tt numpy.array}. In that case,
 it should be assumed to be {\tt numpy.array}.
 
+Examples: test\_0025,  test\_0026,  test\_0027.
+
 
 \paragraph{Options (MetaModelica)}
 In python, each function has a return value, if the return value is not specified, it's {\tt None}. 
@@ -177,12 +180,17 @@ and no return value, the function does nothing and can be replaced by constant {
 This suggest itself to be translate a function which may return either a value or {\tt None} using MetaModelica options.
 
 But note, that the resulting type in Modelica will be {\tt Option<Real>} for example, but in python it's simply either {\tt float} or
-{\tt NoneType}. The translator must take this in consideration when later dealing with the returned value.
+{\tt NoneType}. The translator must take this in consideration when later dealing with the returned value. For example,
+a function with a parameter of type {\tt Option<Real>} must be guaranteed to somehow accept values of type {\tt Real} as well.
 
 Typical situation is when a condition in {\tt if} statement asks if certain variable is {\tt None}. In that case, it's safe to assume,
 that the variable in question should have type {\tt Option<...>} when translated. This makes translation of {\tt if} statements 
 seemingly more complicated, but notice that such statements would not be translatable anyways, since variables in Modelica are strongly typed.
-Thus, this is an unambiguous extension to the {\tt if} statement translation.
+Thus, this is an unambiguous extension to the {\tt if} statement translation. This holds in general for any situation, 
+where the variable can be either {\tt None} or some other (known or assumed) type.
+
+Examples: test\_0028,  test\_0029,  test\_0030.
+
 
 \paragraph{Built-in functions} This table shows correspondence between built-in functions and basic language constructs used 
 in the tests.

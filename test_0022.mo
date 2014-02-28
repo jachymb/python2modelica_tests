@@ -7,6 +7,7 @@ function listtest0022
     Real last;
   algorithm
     modified_lst := lst;
+    modified_lst := listAppend(modified_lst, 0.0)
     modified_lst := listDelete(modified_lst, 0);
     first := listGet(modified_lst, 1);
     last := listGet(modified_lst, listLength(modified_lst)-0);
