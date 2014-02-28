@@ -170,9 +170,21 @@ It may be sometimes impossible to determine, if a variable is a {\tt list} / {\t
 it should be assumed to be {\tt numpy.array}.
 
 
-\paragraph{}
+\paragraph{Options (MetaModelica)}
+In python, each function has a return value, if the return value is not specified, it's {\tt None}. 
+If no {\tt return} statement is in a function, only side-effects are returned. (If there are no side effects 
+and no return value, the function does nothing and can be replaced by constant {\tt None}).
+This suggest itself to be translate a function which may return either a value or {\tt None} using MetaModelica options.
 
-\paragraph{Built-in functions} This table shows correspondence between builtin functions and basic language constructs used 
+But note, that the resulting type in Modelica will be {\tt Option<Real>} for example, but in python it's simply either {\tt float} or
+{\tt NoneType}. The translator must take this in consideration when later dealing with the returned value.
+
+Typical situation is when a condition in {\tt if} statement asks if certain variable is {\tt None}. In that case, it's safe to assume,
+that the variable in question should have type {\tt Option<...>} when translated. This makes translation of {\tt if} statements 
+seemingly more complicated, but notice that such statements would not be translatable anyways, since variables in Modelica are strongly typed.
+Thus, this is an unambiguous extension to the {\tt if} statement translation.
+
+\paragraph{Built-in functions} This table shows correspondence between built-in functions and basic language constructs used 
 in the tests.
 \newline
 \begin{tabularx}{\textwidth}{|l|l|p{5cm}|}
@@ -186,7 +198,7 @@ Python & Modelica & Notes \\
 \tt for x in z: --- & \tt for x in z loop --- end for;& {\tt x}, and the block {\tt ---} must be translated. {\tt z} is a {\tt range}. \\
 \tt for x in lst: --- & \tt \vtop{ \hbox{for local\_variablei in}\hbox{  (1:listLength(lst)) z loop} \hbox{x := listGet(lst, local\_variablei);} \hbox{--- end for;} } & {\tt l} is a  {\tt list}. \\
 \tt while b: --- & \tt while b loop --- end while;& {\tt b} and the block {\tt ---} must be translated \\
-\tt \vtop{\hbox{if b1: ---} \hbox{elseif b2: ---} \hbox{else: ---}}& \tt \vtop{\hbox{if b1 then ---}\hbox{elseif b2 then ---}\hbox{else --- end if;}} & {\strut{\tt b1}, {\tt b2} and the corresponding blocks {\tt ---} must be translated} \\
+\tt \vtop{\hbox{if b1: ---} \hbox{elseif b2: ---} \hbox{else: ---}}& \tt \vtop{\hbox{if b1 then ---}\hbox{elseif b2 then ---}\hbox{else --- end if;}} & {\strut{\tt b1}, {\tt b2} and the corresponding blocks {\tt ---} must be translated}. See also paragraph about MetaModelica options. \\
 \tt numpy.ones((a,b,c,...)) & \tt ones(a,b,c,...) & \\
 \tt numpy.ones([a,b,c,...]) & \tt ones(a,b,c,...) & Alternative syntax.\\
 \tt numpy.zeros((a,b,c,...)) & \tt zeros(a,b,c,...) & \\
@@ -218,6 +230,7 @@ Python & Modelica & Notes \\
 \tt lst[i] & \tt listGet(lst, i-1) & Also assuming {\tt i >= 0}. \\
 \tt lst[-i] & \tt listGet(lst, listLength(lst)-i+1) & \\
 \tt x in lst & \tt listMember(x, lst) & Different semantics of {\tt in} than in {\tt for} loop statement. \\
+\tt math.asin & \tt asin & \\
 \hline
 \end{tabularx}
 
