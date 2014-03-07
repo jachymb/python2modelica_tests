@@ -1,4 +1,5 @@
 import re
+from collections import OrderedDict
 
 # Dictionary: {tokenstring: tokenname}
 TOKENS = dict((l.split(" ") for l in open("tokens.txt").read().splitlines()))
@@ -16,6 +17,10 @@ class ProductionLexer:
         else: return tokenstr[0]
 
     def __init__(self, production):
+        production = production.strip()
+        # Remove unnecessary parenthesis
+        if production[0] == '(' and production[-1] == ')':
+            production = production[1:-1]
         self.tokens = [
                 (t, self._tokentype(t)) if self._tokentype(t) != "'" \
                     else (TOKENS[t[1:-1]], 'A')
@@ -35,17 +40,15 @@ class ProductionLexer:
         except IndexError:
             return None, None
 
-count = 0
 # A simple top-down parser for the regexp language
 class ProductionParser:
-    def _generatename(self):
-        global count
-        count += 1
-        return "s"+str(count)
+    @staticmethod
+    def _generatename(s):
+        return s.strip().replace(" ","_").replace("|","_or_").lower()
 
     def __init__(self, production):
         self.lexer = ProductionLexer(production)
-        self.addedrules = {}
+        self.addedrules = OrderedDict()
         self.count = 0
 
     def S(self):
@@ -70,7 +73,7 @@ class ProductionParser:
             inner = self.S()
             assert self.lexer.lookup()[1] == '('
             self.lexer.nextToken()
-            name = self._generatename()
+            name = self._generatename(inner)
             self.addedrules[name] = inner
             res = name + " " + res
         elif lookuptype == ']':
@@ -78,36 +81,45 @@ class ProductionParser:
             inner = self.S()
             assert self.lexer.lookup()[1] == '['
             self.lexer.nextToken()
-            name = self._generatename()
-            self.addedrules[name] = inner + " | " # optional expression
+            name = "optional__"+ self._generatename(inner)
+            self.addedrules[name] = " | " + inner # optional expression
             res = name + " " + res
         elif lookuptype == '*':
             self.lexer.nextToken()
             expr = self.A()
-            name = self._generatename()
-            self.addedrules[name] = expr + " " + name + " | "
+            name = "zeroormore__" +self._generatename(expr)
+            self.addedrules[name] = " | " + expr + " " + name
             res = name + " " + res
         elif lookuptype == "+":
             self.lexer.nextToken()
             expr = self.A()
-            name = self._generatename()
+            name = "oneormore__" + self._generatename(expr)
             self.addedrules[name] = expr + " " + name + " | " + expr
             res = name + " " + res
         return res
 
+def printreduce(options, head):
+    return "\n    | ".join([option + (' {printf("Parser: Reducing <%s> to <%s>\\n");}' % (option.strip(), head)) for option in options.split("|")])
+
 if __name__ == "__main__":
+    priority = [] # ["optional__test", "optional__testlist_comp", "optional__dictorsetmaker", "optional__yield_expr__or__testlist_comp"]
+
     oldgrammar = (l.split(":",1) for l in open("grammar.txt").read().splitlines())
-    newgrammar = {}
+    newgrammar = OrderedDict()
 
     for head, production in oldgrammar:
         parser = ProductionParser(production)
-        newgrammar[head] = parser.S()
-        for k in parser.addedrules.keys(): assert k not in newgrammar
-        newgrammar.update(parser.addedrules)
+        s = parser.S()
+        for k,v in (parser.addedrules.items()):
+            if k not in newgrammar:
+                newgrammar[k] = printreduce(v,k)
+            else:
+                assert printreduce(v,k) == newgrammar[k]
+        newgrammar["\n"+head] = printreduce(s,head)+"\n"
 
+    for head in priority:
+        print(head +  ": " + newgrammar[head])
+        del newgrammar[head]
+    print()
     for head, production in newgrammar.items():
         print(head + ": " + production)
-
-
-
-
