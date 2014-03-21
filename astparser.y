@@ -11,7 +11,13 @@ extern "C" FILE *yyin;
 
 void yyerror(const char *s);
 
-/* Changes to actual grammar:
+/* This parser works for Python 3.4.0. For earlier versions, the AST
+ * library unfortunately produces slightly different tree, but if suppport
+ * for older versions of Python is required, it shouldn't be so difficult
+ * to change the underlying abstract grammar.
+ *
+ * Changes to actual grammar in documentation:
+ * http://docs.python.org/3.4/library/ast.html
  *
  * Some tokens would collide with rules. These tokens have added
  * an underscore to the end of their name, but represent string
@@ -200,7 +206,7 @@ void yyerror(const char *s);
 %token withitem_
 
 %%
-mod : Module '(' '[' listof_stmt ']' ')' ;
+mod : Module '(' '[' listof_stmt ']' ')' { cout << "Parsed!" << endl; } ;
 stmt : FunctionDef '(' string ',' arguments ',' '[' listof_stmt ']' ',' '[' listof_expr ']' ',' optional_expr ')' | ClassDef '(' string ',' '[' listof_expr ']' ',' '[' listof_keyword ']' ',' optional_expr ',' optional_expr ',' '[' listof_stmt ']' ',' '[' listof_expr ']' ')' | Return '(' optional_expr ')' | Delete '(' '[' listof_expr ']' ')' | Assign '(' '[' listof_expr ']' ',' expr ')' | AugAssign '(' expr ',' operator ',' expr ')' | For '(' expr ',' expr ',' '[' listof_stmt ']' ',' '[' listof_stmt ']' ')' | While '(' expr ',' '[' listof_stmt ']' ',' '[' listof_stmt ']' ')' | If '(' expr ',' '[' listof_stmt ']' ',' '[' listof_stmt ']' ')' | With '(' '[' listof_withitem ']' ',' '[' listof_stmt ']' ')' | Raise '(' optional_expr ',' optional_expr ')' | Try '(' '[' listof_stmt ']' ',' '[' listof_excepthandler ']' ',' '[' listof_stmt ']' ',' '[' listof_stmt ']' ')' | Assert '(' expr ',' optional_expr ')' | Import '(' '[' listof_alias ']' ')' | ImportFrom '(' optional_identifier ',' '[' listof_alias ']' ',' optional_object ')' | Global '(' '[' listof_identifier ']' ')' | Nonlocal '(' '[' listof_identifier ']' ')' | Expr '(' expr ')' | Pass '(' ')' | Break '(' ')' | Continue '(' ')' ;
 expr : BoolOp '(' boolop ',' '[' listof_expr ']' ')' | BinOp '(' expr ',' operator ',' expr ')' | UnaryOp '(' unaryop ',' expr ')' | Lambda '(' arguments ',' expr ')' | IfExp '(' expr ',' expr ',' expr ')' | Dict '(' '[' listof_expr ']' ',' '[' listof_expr ']' ')' | Set '(' '[' listof_expr ']' ')' | ListComp '(' expr ',' '[' listof_comprehension ']' ')' | SetComp '(' expr ',' '[' listof_comprehension ']' ')' | DictComp '(' expr ',' expr ',' '[' listof_comprehension ']' ')' | GeneratorExp '(' expr ',' '[' listof_comprehension ']' ')' | Yield '(' optional_expr ')' | YieldFrom '(' expr ')' | Compare '(' expr ',' '[' listof_cmpop ']' ',' '[' listof_expr ']' ')' | Call '(' expr ',' '[' listof_expr ']' ',' '[' listof_keyword ']' ',' optional_expr ',' optional_expr ')' | Num '(' object ')' | Str '(' string ')' | Bytes '(' 'b' string ')' | NameConstant '(' singleton ')' | Ellipsis '(' ')' | Attribute '(' expr ',' string ',' expr_context ')' | Subscript '(' expr ',' slice ',' expr_context ')' | Starred '(' expr ',' expr_context ')' | Name '(' string ',' expr_context ')' | List '(' '[' listof_expr ']' ',' expr_context ')' | Tuple '(' '[' listof_expr ']' ',' expr_context ')' ;
 expr_context : Load '(' ')' | Store '(' ')' | Del '(' ')' | AugLoad '(' ')' | AugStore '(' ')' | Param '(' ')' ;
@@ -222,17 +228,17 @@ optional_identifier : string | None ;
 optional_object : object | None ;
 optional_arg : arg | None ;
 
-listof_stmt : stmt ',' listof_stmt | ;
-listof_expr : expr ',' listof_expr | ;
-listof_keyword : keyword ',' listof_keyword | ;
-listof_withitem : withitem ',' listof_withitem | ;
-listof_excepthandler : excepthandler ',' listof_excepthandler | ;
-listof_alias : alias ',' listof_alias | ;
-listof_identifier : string ',' listof_identifier | ;
-listof_comprehension : comprehension ',' listof_comprehension | ;
-listof_cmpop : cmpop ',' listof_cmpop | ;
-listof_slice : slice ',' listof_slice | ;
-listof_arg : arg ',' listof_arg | ;
+listof_stmt : stmt ',' listof_stmt | stmt | /* empty */ ;
+listof_expr : expr ',' listof_expr | expr | /* empty */ ;
+listof_keyword : keyword ',' listof_keyword | keyword | /* empty */ ;
+listof_withitem : withitem ',' listof_withitem | withitem | /* empty */ ;
+listof_excepthandler : excepthandler ',' listof_excepthandler | excepthandler | /* empty */ ;
+listof_alias : alias ',' listof_alias | alias | /* empty */ ;
+listof_identifier : string ',' listof_identifier | string | /* empty */ ;
+listof_comprehension : comprehension ',' listof_comprehension | comprehension | /* empty */ ;
+listof_cmpop : cmpop ',' listof_cmpop | cmpop | /* empty */ ;
+listof_slice : slice ',' listof_slice | slice | /* empty */ ;
+listof_arg : arg ',' listof_arg | arg | /* empty */ ;
 %%
 
 main() {
