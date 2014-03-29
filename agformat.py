@@ -20,29 +20,26 @@ arg : arg_ LPAREN string COMMA optional_expr RPAREN ;
 keyword : keyword_ LPAREN string COMMA expr RPAREN ;
 alias : alias_ LPAREN string COMMA optional_identifier RPAREN ;
 withitem : withitem_ LPAREN expr COMMA optional_expr RPAREN ;
+singleton : True | False | None
 optional_expr : expr | None ;
 optional_identifier : string | None ;
 optional_object : object | None ;
 optional_arg : arg | None ;
-listof_stmt : stmt COMMA listof_stmt | stmt | /* empty */ ;
-listof_expr : expr COMMA listof_expr | expr | /* empty */ ;
-listof_keyword : keyword COMMA listof_keyword | keyword | /* empty */ ;
-listof_withitem : withitem COMMA listof_withitem | withitem | /* empty */ ;
-listof_excepthandler : excepthandler COMMA listof_excepthandler | excepthandler | /* empty */ ;
-listof_alias : alias COMMA listof_alias | alias | /* empty */ ;
-listof_identifier : string COMMA listof_identifier | string | /* empty */ ;
-listof_comprehension : comprehension COMMA listof_comprehension | comprehension | /* empty */ ;
-listof_cmpop : cmpop COMMA listof_cmpop | cmpop | /* empty */ ;
-listof_slice : slice COMMA listof_slice | slice | /* empty */ ;
-listof_arg : arg COMMA listof_arg | arg | /* empty */ ;
-singleton : True | False | None"""
+listof_stmt : stmt COMMA listof_stmt | stmt | ;
+listof_expr : expr COMMA listof_expr | expr | ;
+listof_keyword : keyword COMMA listof_keyword | keyword | ;
+listof_withitem : withitem COMMA listof_withitem | withitem | ;
+listof_excepthandler : excepthandler COMMA listof_excepthandler | excepthandler | ;
+listof_alias : alias COMMA listof_alias | alias | ;
+listof_identifier : string COMMA listof_identifier | string | ;
+listof_comprehension : comprehension COMMA listof_comprehension | comprehension | ;
+listof_cmpop : cmpop COMMA listof_cmpop | cmpop | ;
+listof_slice : slice COMMA listof_slice | slice | ;
+listof_arg : arg COMMA listof_arg | arg | ;"""
 
-ARGNAMES = {'List': ('elts', 'ctx'), 'Attribute': ('value', 'attr', 'ctx'), 'Import': ('names',), 'If': ('test', 'body', 'orelse'), 'Name': ('id', 'ctx'), 'Is': (), 'Store': (), 'Not': (), 'ListComp': ('elt', 'generators'), 'comprehension_': ('target', 'iter', 'ifs'), 'Assert': ('test', 'msg'), 'FunctionDef': ('name', 'args', 'body', 'decorator_list', 'returns'), 'GeneratorExp': ('elt', 'generators'), 'Assign': ('targets', 'value'), 'Try': ('body', 'handlers', 'orelse', 'finalbody'), 'AugAssign': ('target', 'op', 'value'), 'Mult': (), 'Lambda': ('args', 'body'), 'IsNot': (), 'keyword_': ('argid', 'value'), 'arguments_': ('args', 'vararg', 'kwonlyargs', 'kw_defaults', 'kwarg', 'defaults'), 'USub': (), 'IfExp': ('test', 'body', 'orelse'), 'Sub': (), 'DictComp': ('key', 'value', 'generators'), 'Ellipsis': (), 'Num': ('n',), 'Del': (), 'UnaryOp': ('op', 'operand'), 'NameConstant': ('value',), 'Gt': (), 'Subscript': ('value', 'subscriptslice', 'ctx'), 'Load': (), 'Pow': (), 'YieldFrom': ('value',), 'With': ('items', 'body'), 'NotEq': (), 'While': ('test', 'body', 'orelse'), 'Eq': (), 'BitXor': (), 'Delete': ('targets',), 'Pass': (), 'Raise': ('exc', 'cause'), 'Invert': (), 'FloorDiv': (), 'NotIn': (), 'SetComp': ('elt', 'generators'), 'Module': ('body',), 'Add': (), 'arg_': ('argid', 'annotation'), 'alias_': ('name', 'asname'), 'GtE': (), 'ImportFrom': ('module', 'names', 'level'), 'Div': (), 'ExtSlice': ('dims',), 'Nonlocal': ('names',), 'Yield': ('value',), 'Str': ('s',), 'Slice': ('lower', 'upper', 'step'), 'AugLoad': (), 'In': (), 'BitAnd': (), 'withitem_': ('context_expr', 'optional_vars'), 'Global': ('names',), 'Continue': (), 'Dict': ('keys', 'values'), 'LShift': (), 'Set': ('elts',), 'Starred': ('value', 'ctx'), 'Call': ('func', 'args', 'keywords', 'starargs', 'kwargs'), 'Return': ('value',), 'Mod': (), 'Tuple': ('elts', 'ctx'), 'BitOr': (), 'Expr': ('value',), 'For': ('target', 'iter', 'body', 'orelse'), 'And': (), 'Compare': ('left', 'ops', 'comparators'), 'Lt': (), 'Break': (), 'BinOp': ('left', 'op', 'right'), 'LtE': (), 'ClassDef': ('name', 'bases', 'keywords', 'starargs', 'kwargs', 'body', 'decorator_list'), 'Param': (), 'Or': (), 'BoolOp': ('op', 'values'), 'AugStore': (), 'ExceptHandler': ('type', 'name', 'body'), 'UAdd': (), 'RShift': (), 'Bytes': ('s',), 'Index': ('value',)}
+ARGNAMES = {'List': ('elts', 'ctx'), 'Attribute': ('value', 'attr', 'ctx'), 'Import': ('names',), 'If': ('test', 'body', 'orelse'), 'Name': ('id', 'ctx'), 'Is': (), 'Store': (), 'Not': (), 'ListComp': ('elt', 'generators'), 'comprehension_': ('target', 'iter', 'ifs'), 'Assert': ('test', 'msg'), 'FunctionDef': ('name', 'args', 'body', 'decorator_list', 'returns'), 'GeneratorExp': ('elt', 'generators'), 'Assign': ('targets', 'value'), 'Try': ('body', 'handlers', 'orelse', 'finalbody'), 'AugAssign': ('target', 'op', 'value'), 'Mult': (), 'Lambda': ('args', 'body'), 'IsNot': (), 'keyword_': ('argid', 'value'), 'arguments_': ('args', 'vararg', 'kwonlyargs', 'kw_defaults', 'kwarg', 'defaults'), 'USub': (), 'IfExp': ('test', 'body', 'orelse'), 'Sub': (), 'DictComp': ('key', 'value', 'generators'), 'Ellipsis': (), 'Num': ('n',), 'Del': (), 'UnaryOp': ('op', 'operand'), 'NameConstant': ('value',), 'Gt': (), 'Subscript': ('value', 'subscriptslice', 'ctx'), 'Load': (), 'Pow': (), 'YieldFrom': ('value',), 'With': ('items', 'body'), 'NotEq': (), 'While': ('test', 'body', 'orelse'), 'Eq': (), 'BitXor': (), 'Delete': ('targets',), 'Pass': (), 'Raise': ('exc', 'cause'), 'Invert': (), 'FloorDiv': (), 'NotIn': (), 'SetComp': ('elt', 'generators'), 'Module': ('body',), 'Add': (), 'arg_': ('argid', 'annotation'), 'alias_': ('name', 'asname'), 'GtE': (), 'ImportFrom': ('module', 'names', 'level'), 'Div': (), 'ExtSlice': ('dims',), 'Nonlocal': ('names',), 'Yield': ('value',), 'Str': ('s',), 'Slice': ('lower', 'upper', 'step'), 'AugLoad': (), 'In': (), 'BitAnd': (), 'withitem_': ('context_expr', 'optional_vars'), 'Global': ('names',), 'Continue': (), 'Dict': ('keys', 'values'), 'LShift': (), 'Set': ('elts',), 'Starred': ('value', 'ctx'), 'Call': ('func', 'args', 'keywords', 'starargs', 'kwargs'), 'Return': ('value',), 'Mod': (), 'Tuple': ('elts', 'ctx'), 'BitOr': (), 'Expr': ('value',), 'For': ('target', 'iter', 'body', 'orelse'), 'And': (), 'Compare': ('left', 'ops', 'comparators'), 'Lt': (), 'Break': (), 'BinOp': ('left', 'op', 'right'), 'LtE': (), 'ClassDef': ('name', 'bases', 'keywords', 'starargs', 'kwargs', 'body', 'decorator_list'), 'Param': (), 'Or': (), 'BoolOp': ('op', 'values'), 'AugStore': (), 'ExceptHandler': ('type', 'name', 'body'), 'UAdd': (), 'RShift': (), 'Bytes': ('s',), 'Index': ('value',), "singleton": ()}
 #dict([ (l[:l.find("(")], tuple(map(lambda x: x.split(" ")[1] , l[l.find("(")+1:-2].split(", ") if l.find("(") != -1 else []) )) for l in open("fullgrammar.txt").read().splitlines()])
 
-
-def semanticRule(production, head, indent):
-    return '%s\n%s{ cout << "Reducing <%s> to %s" << endl; }' % (production, " "*(indent+2), production, head)
 
 def converttype(s):
     if s == "object": return "String"
@@ -61,9 +58,10 @@ if __name__ == "__main__":
     heads, prods =  tuple(zip(*rules))
     indentsize = max(map(len, heads)) + 1
        
+
     nottokens = set(heads) #.union({"'('", "')'", "'['", "']'", "','", "/*", "*/", "empty", "'b'"})
     # Also do not print tokens for data types
-    nottokens = nottokens.union({"string", "object", "singleton"})
+    nottokens = nottokens.union({"string", "object"})
 
     tokens = set(reduce(add, [p.split(" ") for p in reduce(add, prods)])).difference(nottokens)
     with open(sys.argv[1], "w") as tf:
@@ -72,37 +70,65 @@ if __name__ == "__main__":
     
     with open(sys.argv[2], "w") as aofile:
         for head, productions in rules:
-            # C++ style
-            #print(("{0:<%s}: {1}" % indentsize).format(head, semanticRule(productions[0], head, indentsize)))
-            #for production in productions[1:]:
-            #    print(" "*indentsize + "| " + semanticRule(production, head, indentsize)) 
-            #print(";")
-            if head.startswith("listof_") or head.startswith("optional_"):
-                continue
-            i=1
-            print("public uniontype "+head, file=aofile)
-            for production in productions:
+            def print_a(s):
+                if not (head.startswith("listof_") or head.startswith("optional_")):
+                    print(s, file=aofile)
+
+            print_a("public uniontype "+head)
+            for pn,production in enumerate(productions):
+
                 prods = production.split(" ")
                 constructor = prods[0]
                 recordname = constructor.upper().replace("_", "")
 
-                # Make records without params oneliners
-                if len(tuple(filter(lambda x: x not in tokens, prods))) == 0:
-                    print("\trecord "+recordname+" end "+recordname+";", file=aofile)
-                    continue
 
-                print("\trecord "+recordname, file=aofile)
+                # Make records without params oneliners
+                #if len(tuple(filter(lambda x: x not in tokens, prods))) == 0 and \
+                #        not (head.startswith("listof_") or head.startswith("optional_")):
+                #    print_a("\trecord "+recordname+" end "+recordname+";")
+                #    continue
+
+                print_a("\trecord "+recordname)
                 i = 0
-                for x in prods:
-                    if x in tokens: continue
-                    argname, i = ARGNAMES[constructor][i], i+1
-                    assert argname not in heads
-                    if x.startswith("listof_"):
-                        print("\t\tlist<%s>\t%s;" % (converttype(x[7:]), argname), file=aofile)
-                    elif x.startswith("optional_"):
-                        print("\t\tOption<%s>\t%s;" % (converttype(x[9:]), argname), file=aofile)
+                constructorparams = []
+                if head.startswith("optional_"):
+                    if pn == 0:
+                        semanticRule = "$$[Option<"+head[9:]+">] = SOME($1);"
                     else:
-                        print("\t\t%s\t%s;" % (converttype(x), argname), file=aofile)
-                print("\tend "+recordname+";", file=aofile)
-                i+=1
-            print("end "+head+";\n", file=aofile)
+                        semanticRule = "$$["+head+"] = NONE();"
+                elif head.startswith("listof_"):
+                    semanticRule = "$$[list<"+head[7:]+">] = %s;"
+                    if pn == 0:
+                        semanticRule %= "$1::$3"
+                    elif pn == 1:
+                        semanticRule %= "$1::{}"
+                    else:
+                        semanticRule %= "{}"
+
+                else:
+                    semanticRule = "$$["+head+"] = Absyn."+recordname+"(%s);"
+                    for pi, x in enumerate(prods):
+                        if x in tokens: continue
+                        argname, i = ARGNAMES[constructor][i], i+1
+                        assert argname not in heads
+                        if x.startswith("listof_"):
+                            print_a("\t\tlist<%s>\t%s;" % (converttype(x[7:]), argname))
+                        elif x.startswith("optional_"):
+                            print_a("\t\tOption<%s>\t%s;" % (converttype(x[9:]), argname))
+                        else:
+                            print_a("\t\t%s\t%s;" % (converttype(x), argname))
+                        constructorparams.append("$"+str(pi)+"["+argname+"]")
+                    print_a("\tend "+recordname+";")
+                    i+=1
+
+                    semanticRule %= ", ".join(constructorparams)
+
+                if pn == 0:
+                    print("%s: %s\n%s  { %s }" % 
+                        (head.ljust(indentsize), productions[0], " "*indentsize, semanticRule))
+                else:
+                    print("%s| %s\n%s  { %s }" % 
+                        (" "*indentsize, production, " "*indentsize, semanticRule))
+            print_a("end "+head+";\n")
+
+            print(";")
