@@ -33,21 +33,31 @@ void yyerror(const char *s);
  * import levels. This change has no effect on numerical constants.
  * This could in special occasions cause the parser accept invalid imports,
  * but import levels are seldom used and are of no interest to the translator.
+ * 
+ x Type singleton has only three values (True, False, None) and can only 
+ * appear within NameConstant. 
+ *
+ * Parameter name for node constructor changes (due to conflicts):
+ * slice -> subscriptslice
+ * arg -> argid
  */
 
 %}
 
-%union {
-  long int ival;
-  float    fval;
-  char    *sval;
-}
-
 %start mod
 
-%token <sval> string
-%token <sval> object
-%token singleton
+%token string
+%token object
+
+%token True
+%token False
+
+%token LPAREN
+%token RPAREN
+%token LBRACE
+%token RBRACE
+%token COMMA
+%token B
 
 %token Add
 %token And
@@ -144,205 +154,205 @@ void yyerror(const char *s);
 %token withitem_
 
 %%
-mod                  : Module '(' '[' listof_stmt ']' ')'
-                       { cout << "Reducing <Module '(' '[' listof_stmt ']' ')'> to mod" << endl; }
+mod                  : Module LPAREN LBRACE listof_stmt RBRACE RPAREN
+                       { cout << "Reducing <Module LPAREN LBRACE listof_stmt RBRACE RPAREN> to mod" << endl; }
 ;
-stmt                 : FunctionDef '(' string ',' arguments ',' '[' listof_stmt ']' ',' '[' listof_expr ']' ',' optional_expr ')'
-                       { cout << "Reducing <FunctionDef '(' string ',' arguments ',' '[' listof_stmt ']' ',' '[' listof_expr ']' ',' optional_expr ')'> to stmt" << endl; }
-                     | ClassDef '(' string ',' '[' listof_expr ']' ',' '[' listof_keyword ']' ',' optional_expr ',' optional_expr ',' '[' listof_stmt ']' ',' '[' listof_expr ']' ')'
-                       { cout << "Reducing <ClassDef '(' string ',' '[' listof_expr ']' ',' '[' listof_keyword ']' ',' optional_expr ',' optional_expr ',' '[' listof_stmt ']' ',' '[' listof_expr ']' ')'> to stmt" << endl; }
-                     | Return '(' optional_expr ')'
-                       { cout << "Reducing <Return '(' optional_expr ')'> to stmt" << endl; }
-                     | Delete '(' '[' listof_expr ']' ')'
-                       { cout << "Reducing <Delete '(' '[' listof_expr ']' ')'> to stmt" << endl; }
-                     | Assign '(' '[' listof_expr ']' ',' expr ')'
-                       { cout << "Reducing <Assign '(' '[' listof_expr ']' ',' expr ')'> to stmt" << endl; }
-                     | AugAssign '(' expr ',' operator ',' expr ')'
-                       { cout << "Reducing <AugAssign '(' expr ',' operator ',' expr ')'> to stmt" << endl; }
-                     | For '(' expr ',' expr ',' '[' listof_stmt ']' ',' '[' listof_stmt ']' ')'
-                       { cout << "Reducing <For '(' expr ',' expr ',' '[' listof_stmt ']' ',' '[' listof_stmt ']' ')'> to stmt" << endl; }
-                     | While '(' expr ',' '[' listof_stmt ']' ',' '[' listof_stmt ']' ')'
-                       { cout << "Reducing <While '(' expr ',' '[' listof_stmt ']' ',' '[' listof_stmt ']' ')'> to stmt" << endl; }
-                     | If '(' expr ',' '[' listof_stmt ']' ',' '[' listof_stmt ']' ')'
-                       { cout << "Reducing <If '(' expr ',' '[' listof_stmt ']' ',' '[' listof_stmt ']' ')'> to stmt" << endl; }
-                     | With '(' '[' listof_withitem ']' ',' '[' listof_stmt ']' ')'
-                       { cout << "Reducing <With '(' '[' listof_withitem ']' ',' '[' listof_stmt ']' ')'> to stmt" << endl; }
-                     | Raise '(' optional_expr ',' optional_expr ')'
-                       { cout << "Reducing <Raise '(' optional_expr ',' optional_expr ')'> to stmt" << endl; }
-                     | Try '(' '[' listof_stmt ']' ',' '[' listof_excepthandler ']' ',' '[' listof_stmt ']' ',' '[' listof_stmt ']' ')'
-                       { cout << "Reducing <Try '(' '[' listof_stmt ']' ',' '[' listof_excepthandler ']' ',' '[' listof_stmt ']' ',' '[' listof_stmt ']' ')'> to stmt" << endl; }
-                     | Assert '(' expr ',' optional_expr ')'
-                       { cout << "Reducing <Assert '(' expr ',' optional_expr ')'> to stmt" << endl; }
-                     | Import '(' '[' listof_alias ']' ')'
-                       { cout << "Reducing <Import '(' '[' listof_alias ']' ')'> to stmt" << endl; }
-                     | ImportFrom '(' optional_identifier ',' '[' listof_alias ']' ',' optional_object ')'
-                       { cout << "Reducing <ImportFrom '(' optional_identifier ',' '[' listof_alias ']' ',' optional_object ')'> to stmt" << endl; }
-                     | Global '(' '[' listof_identifier ']' ')'
-                       { cout << "Reducing <Global '(' '[' listof_identifier ']' ')'> to stmt" << endl; }
-                     | Nonlocal '(' '[' listof_identifier ']' ')'
-                       { cout << "Reducing <Nonlocal '(' '[' listof_identifier ']' ')'> to stmt" << endl; }
-                     | Expr '(' expr ')'
-                       { cout << "Reducing <Expr '(' expr ')'> to stmt" << endl; }
-                     | Pass '(' ')'
-                       { cout << "Reducing <Pass '(' ')'> to stmt" << endl; }
-                     | Break '(' ')'
-                       { cout << "Reducing <Break '(' ')'> to stmt" << endl; }
-                     | Continue '(' ')'
-                       { cout << "Reducing <Continue '(' ')'> to stmt" << endl; }
+stmt                 : FunctionDef LPAREN string COMMA arguments COMMA LBRACE listof_stmt RBRACE COMMA LBRACE listof_expr RBRACE COMMA optional_expr RPAREN
+                       { cout << "Reducing <FunctionDef LPAREN string COMMA arguments COMMA LBRACE listof_stmt RBRACE COMMA LBRACE listof_expr RBRACE COMMA optional_expr RPAREN> to stmt" << endl; }
+                     | ClassDef LPAREN string COMMA LBRACE listof_expr RBRACE COMMA LBRACE listof_keyword RBRACE COMMA optional_expr COMMA optional_expr COMMA LBRACE listof_stmt RBRACE COMMA LBRACE listof_expr RBRACE RPAREN
+                       { cout << "Reducing <ClassDef LPAREN string COMMA LBRACE listof_expr RBRACE COMMA LBRACE listof_keyword RBRACE COMMA optional_expr COMMA optional_expr COMMA LBRACE listof_stmt RBRACE COMMA LBRACE listof_expr RBRACE RPAREN> to stmt" << endl; }
+                     | Return LPAREN optional_expr RPAREN
+                       { cout << "Reducing <Return LPAREN optional_expr RPAREN> to stmt" << endl; }
+                     | Delete LPAREN LBRACE listof_expr RBRACE RPAREN
+                       { cout << "Reducing <Delete LPAREN LBRACE listof_expr RBRACE RPAREN> to stmt" << endl; }
+                     | Assign LPAREN LBRACE listof_expr RBRACE COMMA expr RPAREN
+                       { cout << "Reducing <Assign LPAREN LBRACE listof_expr RBRACE COMMA expr RPAREN> to stmt" << endl; }
+                     | AugAssign LPAREN expr COMMA operator COMMA expr RPAREN
+                       { cout << "Reducing <AugAssign LPAREN expr COMMA operator COMMA expr RPAREN> to stmt" << endl; }
+                     | For LPAREN expr COMMA expr COMMA LBRACE listof_stmt RBRACE COMMA LBRACE listof_stmt RBRACE RPAREN
+                       { cout << "Reducing <For LPAREN expr COMMA expr COMMA LBRACE listof_stmt RBRACE COMMA LBRACE listof_stmt RBRACE RPAREN> to stmt" << endl; }
+                     | While LPAREN expr COMMA LBRACE listof_stmt RBRACE COMMA LBRACE listof_stmt RBRACE RPAREN
+                       { cout << "Reducing <While LPAREN expr COMMA LBRACE listof_stmt RBRACE COMMA LBRACE listof_stmt RBRACE RPAREN> to stmt" << endl; }
+                     | If LPAREN expr COMMA LBRACE listof_stmt RBRACE COMMA LBRACE listof_stmt RBRACE RPAREN
+                       { cout << "Reducing <If LPAREN expr COMMA LBRACE listof_stmt RBRACE COMMA LBRACE listof_stmt RBRACE RPAREN> to stmt" << endl; }
+                     | With LPAREN LBRACE listof_withitem RBRACE COMMA LBRACE listof_stmt RBRACE RPAREN
+                       { cout << "Reducing <With LPAREN LBRACE listof_withitem RBRACE COMMA LBRACE listof_stmt RBRACE RPAREN> to stmt" << endl; }
+                     | Raise LPAREN optional_expr COMMA optional_expr RPAREN
+                       { cout << "Reducing <Raise LPAREN optional_expr COMMA optional_expr RPAREN> to stmt" << endl; }
+                     | Try LPAREN LBRACE listof_stmt RBRACE COMMA LBRACE listof_excepthandler RBRACE COMMA LBRACE listof_stmt RBRACE COMMA LBRACE listof_stmt RBRACE RPAREN
+                       { cout << "Reducing <Try LPAREN LBRACE listof_stmt RBRACE COMMA LBRACE listof_excepthandler RBRACE COMMA LBRACE listof_stmt RBRACE COMMA LBRACE listof_stmt RBRACE RPAREN> to stmt" << endl; }
+                     | Assert LPAREN expr COMMA optional_expr RPAREN
+                       { cout << "Reducing <Assert LPAREN expr COMMA optional_expr RPAREN> to stmt" << endl; }
+                     | Import LPAREN LBRACE listof_alias RBRACE RPAREN
+                       { cout << "Reducing <Import LPAREN LBRACE listof_alias RBRACE RPAREN> to stmt" << endl; }
+                     | ImportFrom LPAREN optional_identifier COMMA LBRACE listof_alias RBRACE COMMA optional_object RPAREN
+                       { cout << "Reducing <ImportFrom LPAREN optional_identifier COMMA LBRACE listof_alias RBRACE COMMA optional_object RPAREN> to stmt" << endl; }
+                     | Global LPAREN LBRACE listof_identifier RBRACE RPAREN
+                       { cout << "Reducing <Global LPAREN LBRACE listof_identifier RBRACE RPAREN> to stmt" << endl; }
+                     | Nonlocal LPAREN LBRACE listof_identifier RBRACE RPAREN
+                       { cout << "Reducing <Nonlocal LPAREN LBRACE listof_identifier RBRACE RPAREN> to stmt" << endl; }
+                     | Expr LPAREN expr RPAREN
+                       { cout << "Reducing <Expr LPAREN expr RPAREN> to stmt" << endl; }
+                     | Pass LPAREN RPAREN
+                       { cout << "Reducing <Pass LPAREN RPAREN> to stmt" << endl; }
+                     | Break LPAREN RPAREN
+                       { cout << "Reducing <Break LPAREN RPAREN> to stmt" << endl; }
+                     | Continue LPAREN RPAREN
+                       { cout << "Reducing <Continue LPAREN RPAREN> to stmt" << endl; }
 ;
-expr                 : BoolOp '(' boolop ',' '[' listof_expr ']' ')'
-                       { cout << "Reducing <BoolOp '(' boolop ',' '[' listof_expr ']' ')'> to expr" << endl; }
-                     | BinOp '(' expr ',' operator ',' expr ')'
-                       { cout << "Reducing <BinOp '(' expr ',' operator ',' expr ')'> to expr" << endl; }
-                     | UnaryOp '(' unaryop ',' expr ')'
-                       { cout << "Reducing <UnaryOp '(' unaryop ',' expr ')'> to expr" << endl; }
-                     | Lambda '(' arguments ',' expr ')'
-                       { cout << "Reducing <Lambda '(' arguments ',' expr ')'> to expr" << endl; }
-                     | IfExp '(' expr ',' expr ',' expr ')'
-                       { cout << "Reducing <IfExp '(' expr ',' expr ',' expr ')'> to expr" << endl; }
-                     | Dict '(' '[' listof_expr ']' ',' '[' listof_expr ']' ')'
-                       { cout << "Reducing <Dict '(' '[' listof_expr ']' ',' '[' listof_expr ']' ')'> to expr" << endl; }
-                     | Set '(' '[' listof_expr ']' ')'
-                       { cout << "Reducing <Set '(' '[' listof_expr ']' ')'> to expr" << endl; }
-                     | ListComp '(' expr ',' '[' listof_comprehension ']' ')'
-                       { cout << "Reducing <ListComp '(' expr ',' '[' listof_comprehension ']' ')'> to expr" << endl; }
-                     | SetComp '(' expr ',' '[' listof_comprehension ']' ')'
-                       { cout << "Reducing <SetComp '(' expr ',' '[' listof_comprehension ']' ')'> to expr" << endl; }
-                     | DictComp '(' expr ',' expr ',' '[' listof_comprehension ']' ')'
-                       { cout << "Reducing <DictComp '(' expr ',' expr ',' '[' listof_comprehension ']' ')'> to expr" << endl; }
-                     | GeneratorExp '(' expr ',' '[' listof_comprehension ']' ')'
-                       { cout << "Reducing <GeneratorExp '(' expr ',' '[' listof_comprehension ']' ')'> to expr" << endl; }
-                     | Yield '(' optional_expr ')'
-                       { cout << "Reducing <Yield '(' optional_expr ')'> to expr" << endl; }
-                     | YieldFrom '(' expr ')'
-                       { cout << "Reducing <YieldFrom '(' expr ')'> to expr" << endl; }
-                     | Compare '(' expr ',' '[' listof_cmpop ']' ',' '[' listof_expr ']' ')'
-                       { cout << "Reducing <Compare '(' expr ',' '[' listof_cmpop ']' ',' '[' listof_expr ']' ')'> to expr" << endl; }
-                     | Call '(' expr ',' '[' listof_expr ']' ',' '[' listof_keyword ']' ',' optional_expr ',' optional_expr ')'
-                       { cout << "Reducing <Call '(' expr ',' '[' listof_expr ']' ',' '[' listof_keyword ']' ',' optional_expr ',' optional_expr ')'> to expr" << endl; }
-                     | Num '(' object ')'
-                       { cout << "Reducing <Num '(' object ')'> to expr" << endl; }
-                     | Str '(' string ')'
-                       { cout << "Reducing <Str '(' string ')'> to expr" << endl; }
-                     | Bytes '(' 'b' string ')'
-                       { cout << "Reducing <Bytes '(' 'b' string ')'> to expr" << endl; }
-                     | NameConstant '(' singleton ')'
-                       { cout << "Reducing <NameConstant '(' singleton ')'> to expr" << endl; }
-                     | Ellipsis '(' ')'
-                       { cout << "Reducing <Ellipsis '(' ')'> to expr" << endl; }
-                     | Attribute '(' expr ',' string ',' expr_context ')'
-                       { cout << "Reducing <Attribute '(' expr ',' string ',' expr_context ')'> to expr" << endl; }
-                     | Subscript '(' expr ',' slice ',' expr_context ')'
-                       { cout << "Reducing <Subscript '(' expr ',' slice ',' expr_context ')'> to expr" << endl; }
-                     | Starred '(' expr ',' expr_context ')'
-                       { cout << "Reducing <Starred '(' expr ',' expr_context ')'> to expr" << endl; }
-                     | Name '(' string ',' expr_context ')'
-                       { cout << "Reducing <Name '(' string ',' expr_context ')'> to expr" << endl; }
-                     | List '(' '[' listof_expr ']' ',' expr_context ')'
-                       { cout << "Reducing <List '(' '[' listof_expr ']' ',' expr_context ')'> to expr" << endl; }
-                     | Tuple '(' '[' listof_expr ']' ',' expr_context ')'
-                       { cout << "Reducing <Tuple '(' '[' listof_expr ']' ',' expr_context ')'> to expr" << endl; }
+expr                 : BoolOp LPAREN boolop COMMA LBRACE listof_expr RBRACE RPAREN
+                       { cout << "Reducing <BoolOp LPAREN boolop COMMA LBRACE listof_expr RBRACE RPAREN> to expr" << endl; }
+                     | BinOp LPAREN expr COMMA operator COMMA expr RPAREN
+                       { cout << "Reducing <BinOp LPAREN expr COMMA operator COMMA expr RPAREN> to expr" << endl; }
+                     | UnaryOp LPAREN unaryop COMMA expr RPAREN
+                       { cout << "Reducing <UnaryOp LPAREN unaryop COMMA expr RPAREN> to expr" << endl; }
+                     | Lambda LPAREN arguments COMMA expr RPAREN
+                       { cout << "Reducing <Lambda LPAREN arguments COMMA expr RPAREN> to expr" << endl; }
+                     | IfExp LPAREN expr COMMA expr COMMA expr RPAREN
+                       { cout << "Reducing <IfExp LPAREN expr COMMA expr COMMA expr RPAREN> to expr" << endl; }
+                     | Dict LPAREN LBRACE listof_expr RBRACE COMMA LBRACE listof_expr RBRACE RPAREN
+                       { cout << "Reducing <Dict LPAREN LBRACE listof_expr RBRACE COMMA LBRACE listof_expr RBRACE RPAREN> to expr" << endl; }
+                     | Set LPAREN LBRACE listof_expr RBRACE RPAREN
+                       { cout << "Reducing <Set LPAREN LBRACE listof_expr RBRACE RPAREN> to expr" << endl; }
+                     | ListComp LPAREN expr COMMA LBRACE listof_comprehension RBRACE RPAREN
+                       { cout << "Reducing <ListComp LPAREN expr COMMA LBRACE listof_comprehension RBRACE RPAREN> to expr" << endl; }
+                     | SetComp LPAREN expr COMMA LBRACE listof_comprehension RBRACE RPAREN
+                       { cout << "Reducing <SetComp LPAREN expr COMMA LBRACE listof_comprehension RBRACE RPAREN> to expr" << endl; }
+                     | DictComp LPAREN expr COMMA expr COMMA LBRACE listof_comprehension RBRACE RPAREN
+                       { cout << "Reducing <DictComp LPAREN expr COMMA expr COMMA LBRACE listof_comprehension RBRACE RPAREN> to expr" << endl; }
+                     | GeneratorExp LPAREN expr COMMA LBRACE listof_comprehension RBRACE RPAREN
+                       { cout << "Reducing <GeneratorExp LPAREN expr COMMA LBRACE listof_comprehension RBRACE RPAREN> to expr" << endl; }
+                     | Yield LPAREN optional_expr RPAREN
+                       { cout << "Reducing <Yield LPAREN optional_expr RPAREN> to expr" << endl; }
+                     | YieldFrom LPAREN expr RPAREN
+                       { cout << "Reducing <YieldFrom LPAREN expr RPAREN> to expr" << endl; }
+                     | Compare LPAREN expr COMMA LBRACE listof_cmpop RBRACE COMMA LBRACE listof_expr RBRACE RPAREN
+                       { cout << "Reducing <Compare LPAREN expr COMMA LBRACE listof_cmpop RBRACE COMMA LBRACE listof_expr RBRACE RPAREN> to expr" << endl; }
+                     | Call LPAREN expr COMMA LBRACE listof_expr RBRACE COMMA LBRACE listof_keyword RBRACE COMMA optional_expr COMMA optional_expr RPAREN
+                       { cout << "Reducing <Call LPAREN expr COMMA LBRACE listof_expr RBRACE COMMA LBRACE listof_keyword RBRACE COMMA optional_expr COMMA optional_expr RPAREN> to expr" << endl; }
+                     | Num LPAREN object RPAREN
+                       { cout << "Reducing <Num LPAREN object RPAREN> to expr" << endl; }
+                     | Str LPAREN string RPAREN
+                       { cout << "Reducing <Str LPAREN string RPAREN> to expr" << endl; }
+                     | Bytes LPAREN B string RPAREN
+                       { cout << "Reducing <Bytes LPAREN B string RPAREN> to expr" << endl; }
+                     | NameConstant LPAREN singleton RPAREN
+                       { cout << "Reducing <NameConstant LPAREN singleton RPAREN> to expr" << endl; }
+                     | Ellipsis LPAREN RPAREN
+                       { cout << "Reducing <Ellipsis LPAREN RPAREN> to expr" << endl; }
+                     | Attribute LPAREN expr COMMA string COMMA expr_context RPAREN
+                       { cout << "Reducing <Attribute LPAREN expr COMMA string COMMA expr_context RPAREN> to expr" << endl; }
+                     | Subscript LPAREN expr COMMA slice COMMA expr_context RPAREN
+                       { cout << "Reducing <Subscript LPAREN expr COMMA slice COMMA expr_context RPAREN> to expr" << endl; }
+                     | Starred LPAREN expr COMMA expr_context RPAREN
+                       { cout << "Reducing <Starred LPAREN expr COMMA expr_context RPAREN> to expr" << endl; }
+                     | Name LPAREN string COMMA expr_context RPAREN
+                       { cout << "Reducing <Name LPAREN string COMMA expr_context RPAREN> to expr" << endl; }
+                     | List LPAREN LBRACE listof_expr RBRACE COMMA expr_context RPAREN
+                       { cout << "Reducing <List LPAREN LBRACE listof_expr RBRACE COMMA expr_context RPAREN> to expr" << endl; }
+                     | Tuple LPAREN LBRACE listof_expr RBRACE COMMA expr_context RPAREN
+                       { cout << "Reducing <Tuple LPAREN LBRACE listof_expr RBRACE COMMA expr_context RPAREN> to expr" << endl; }
 ;
-expr_context         : Load '(' ')'
-                       { cout << "Reducing <Load '(' ')'> to expr_context" << endl; }
-                     | Store '(' ')'
-                       { cout << "Reducing <Store '(' ')'> to expr_context" << endl; }
-                     | Del '(' ')'
-                       { cout << "Reducing <Del '(' ')'> to expr_context" << endl; }
-                     | AugLoad '(' ')'
-                       { cout << "Reducing <AugLoad '(' ')'> to expr_context" << endl; }
-                     | AugStore '(' ')'
-                       { cout << "Reducing <AugStore '(' ')'> to expr_context" << endl; }
-                     | Param '(' ')'
-                       { cout << "Reducing <Param '(' ')'> to expr_context" << endl; }
+expr_context         : Load LPAREN RPAREN
+                       { cout << "Reducing <Load LPAREN RPAREN> to expr_context" << endl; }
+                     | Store LPAREN RPAREN
+                       { cout << "Reducing <Store LPAREN RPAREN> to expr_context" << endl; }
+                     | Del LPAREN RPAREN
+                       { cout << "Reducing <Del LPAREN RPAREN> to expr_context" << endl; }
+                     | AugLoad LPAREN RPAREN
+                       { cout << "Reducing <AugLoad LPAREN RPAREN> to expr_context" << endl; }
+                     | AugStore LPAREN RPAREN
+                       { cout << "Reducing <AugStore LPAREN RPAREN> to expr_context" << endl; }
+                     | Param LPAREN RPAREN
+                       { cout << "Reducing <Param LPAREN RPAREN> to expr_context" << endl; }
 ;
-slice                : Slice '(' optional_expr ',' optional_expr ',' optional_expr ')'
-                       { cout << "Reducing <Slice '(' optional_expr ',' optional_expr ',' optional_expr ')'> to slice" << endl; }
-                     | ExtSlice '(' '[' listof_slice ']' ')'
-                       { cout << "Reducing <ExtSlice '(' '[' listof_slice ']' ')'> to slice" << endl; }
-                     | Index '(' expr ')'
-                       { cout << "Reducing <Index '(' expr ')'> to slice" << endl; }
+slice                : Slice LPAREN optional_expr COMMA optional_expr COMMA optional_expr RPAREN
+                       { cout << "Reducing <Slice LPAREN optional_expr COMMA optional_expr COMMA optional_expr RPAREN> to slice" << endl; }
+                     | ExtSlice LPAREN LBRACE listof_slice RBRACE RPAREN
+                       { cout << "Reducing <ExtSlice LPAREN LBRACE listof_slice RBRACE RPAREN> to slice" << endl; }
+                     | Index LPAREN expr RPAREN
+                       { cout << "Reducing <Index LPAREN expr RPAREN> to slice" << endl; }
 ;
-boolop               : And '(' ')'
-                       { cout << "Reducing <And '(' ')'> to boolop" << endl; }
-                     | Or '(' ')'
-                       { cout << "Reducing <Or '(' ')'> to boolop" << endl; }
+boolop               : And LPAREN RPAREN
+                       { cout << "Reducing <And LPAREN RPAREN> to boolop" << endl; }
+                     | Or LPAREN RPAREN
+                       { cout << "Reducing <Or LPAREN RPAREN> to boolop" << endl; }
 ;
-operator             : Add '(' ')'
-                       { cout << "Reducing <Add '(' ')'> to operator" << endl; }
-                     | Sub '(' ')'
-                       { cout << "Reducing <Sub '(' ')'> to operator" << endl; }
-                     | Mult '(' ')'
-                       { cout << "Reducing <Mult '(' ')'> to operator" << endl; }
-                     | Div '(' ')'
-                       { cout << "Reducing <Div '(' ')'> to operator" << endl; }
-                     | Mod '(' ')'
-                       { cout << "Reducing <Mod '(' ')'> to operator" << endl; }
-                     | Pow '(' ')'
-                       { cout << "Reducing <Pow '(' ')'> to operator" << endl; }
-                     | LShift '(' ')'
-                       { cout << "Reducing <LShift '(' ')'> to operator" << endl; }
-                     | RShift '(' ')'
-                       { cout << "Reducing <RShift '(' ')'> to operator" << endl; }
-                     | BitOr '(' ')'
-                       { cout << "Reducing <BitOr '(' ')'> to operator" << endl; }
-                     | BitXor '(' ')'
-                       { cout << "Reducing <BitXor '(' ')'> to operator" << endl; }
-                     | BitAnd '(' ')'
-                       { cout << "Reducing <BitAnd '(' ')'> to operator" << endl; }
-                     | FloorDiv '(' ')'
-                       { cout << "Reducing <FloorDiv '(' ')'> to operator" << endl; }
+operator             : Add LPAREN RPAREN
+                       { cout << "Reducing <Add LPAREN RPAREN> to operator" << endl; }
+                     | Sub LPAREN RPAREN
+                       { cout << "Reducing <Sub LPAREN RPAREN> to operator" << endl; }
+                     | Mult LPAREN RPAREN
+                       { cout << "Reducing <Mult LPAREN RPAREN> to operator" << endl; }
+                     | Div LPAREN RPAREN
+                       { cout << "Reducing <Div LPAREN RPAREN> to operator" << endl; }
+                     | Mod LPAREN RPAREN
+                       { cout << "Reducing <Mod LPAREN RPAREN> to operator" << endl; }
+                     | Pow LPAREN RPAREN
+                       { cout << "Reducing <Pow LPAREN RPAREN> to operator" << endl; }
+                     | LShift LPAREN RPAREN
+                       { cout << "Reducing <LShift LPAREN RPAREN> to operator" << endl; }
+                     | RShift LPAREN RPAREN
+                       { cout << "Reducing <RShift LPAREN RPAREN> to operator" << endl; }
+                     | BitOr LPAREN RPAREN
+                       { cout << "Reducing <BitOr LPAREN RPAREN> to operator" << endl; }
+                     | BitXor LPAREN RPAREN
+                       { cout << "Reducing <BitXor LPAREN RPAREN> to operator" << endl; }
+                     | BitAnd LPAREN RPAREN
+                       { cout << "Reducing <BitAnd LPAREN RPAREN> to operator" << endl; }
+                     | FloorDiv LPAREN RPAREN
+                       { cout << "Reducing <FloorDiv LPAREN RPAREN> to operator" << endl; }
 ;
-unaryop              : Invert '(' ')'
-                       { cout << "Reducing <Invert '(' ')'> to unaryop" << endl; }
-                     | Not '(' ')'
-                       { cout << "Reducing <Not '(' ')'> to unaryop" << endl; }
-                     | UAdd '(' ')'
-                       { cout << "Reducing <UAdd '(' ')'> to unaryop" << endl; }
-                     | USub '(' ')'
-                       { cout << "Reducing <USub '(' ')'> to unaryop" << endl; }
+unaryop              : Invert LPAREN RPAREN
+                       { cout << "Reducing <Invert LPAREN RPAREN> to unaryop" << endl; }
+                     | Not LPAREN RPAREN
+                       { cout << "Reducing <Not LPAREN RPAREN> to unaryop" << endl; }
+                     | UAdd LPAREN RPAREN
+                       { cout << "Reducing <UAdd LPAREN RPAREN> to unaryop" << endl; }
+                     | USub LPAREN RPAREN
+                       { cout << "Reducing <USub LPAREN RPAREN> to unaryop" << endl; }
 ;
-cmpop                : Eq '(' ')'
-                       { cout << "Reducing <Eq '(' ')'> to cmpop" << endl; }
-                     | NotEq '(' ')'
-                       { cout << "Reducing <NotEq '(' ')'> to cmpop" << endl; }
-                     | Lt '(' ')'
-                       { cout << "Reducing <Lt '(' ')'> to cmpop" << endl; }
-                     | LtE '(' ')'
-                       { cout << "Reducing <LtE '(' ')'> to cmpop" << endl; }
-                     | Gt '(' ')'
-                       { cout << "Reducing <Gt '(' ')'> to cmpop" << endl; }
-                     | GtE '(' ')'
-                       { cout << "Reducing <GtE '(' ')'> to cmpop" << endl; }
-                     | Is '(' ')'
-                       { cout << "Reducing <Is '(' ')'> to cmpop" << endl; }
-                     | IsNot '(' ')'
-                       { cout << "Reducing <IsNot '(' ')'> to cmpop" << endl; }
-                     | In '(' ')'
-                       { cout << "Reducing <In '(' ')'> to cmpop" << endl; }
-                     | NotIn '(' ')'
-                       { cout << "Reducing <NotIn '(' ')'> to cmpop" << endl; }
+cmpop                : Eq LPAREN RPAREN
+                       { cout << "Reducing <Eq LPAREN RPAREN> to cmpop" << endl; }
+                     | NotEq LPAREN RPAREN
+                       { cout << "Reducing <NotEq LPAREN RPAREN> to cmpop" << endl; }
+                     | Lt LPAREN RPAREN
+                       { cout << "Reducing <Lt LPAREN RPAREN> to cmpop" << endl; }
+                     | LtE LPAREN RPAREN
+                       { cout << "Reducing <LtE LPAREN RPAREN> to cmpop" << endl; }
+                     | Gt LPAREN RPAREN
+                       { cout << "Reducing <Gt LPAREN RPAREN> to cmpop" << endl; }
+                     | GtE LPAREN RPAREN
+                       { cout << "Reducing <GtE LPAREN RPAREN> to cmpop" << endl; }
+                     | Is LPAREN RPAREN
+                       { cout << "Reducing <Is LPAREN RPAREN> to cmpop" << endl; }
+                     | IsNot LPAREN RPAREN
+                       { cout << "Reducing <IsNot LPAREN RPAREN> to cmpop" << endl; }
+                     | In LPAREN RPAREN
+                       { cout << "Reducing <In LPAREN RPAREN> to cmpop" << endl; }
+                     | NotIn LPAREN RPAREN
+                       { cout << "Reducing <NotIn LPAREN RPAREN> to cmpop" << endl; }
 ;
-comprehension        : comprehension_ '(' expr ',' expr ',' '[' listof_expr ']' ')'
-                       { cout << "Reducing <comprehension_ '(' expr ',' expr ',' '[' listof_expr ']' ')'> to comprehension" << endl; }
+comprehension        : comprehension_ LPAREN expr COMMA expr COMMA LBRACE listof_expr RBRACE RPAREN
+                       { cout << "Reducing <comprehension_ LPAREN expr COMMA expr COMMA LBRACE listof_expr RBRACE RPAREN> to comprehension" << endl; }
 ;
-excepthandler        : ExceptHandler '(' optional_expr ',' optional_identifier ',' '[' listof_stmt ']' ')'
-                       { cout << "Reducing <ExceptHandler '(' optional_expr ',' optional_identifier ',' '[' listof_stmt ']' ')'> to excepthandler" << endl; }
+excepthandler        : ExceptHandler LPAREN optional_expr COMMA optional_identifier COMMA LBRACE listof_stmt RBRACE RPAREN
+                       { cout << "Reducing <ExceptHandler LPAREN optional_expr COMMA optional_identifier COMMA LBRACE listof_stmt RBRACE RPAREN> to excepthandler" << endl; }
 ;
-arguments            : arguments_ '(' '[' listof_arg ']' ',' optional_arg ',' '[' listof_arg ']' ',' '[' listof_expr ']' ',' optional_arg ',' '[' listof_expr ']' ')'
-                       { cout << "Reducing <arguments_ '(' '[' listof_arg ']' ',' optional_arg ',' '[' listof_arg ']' ',' '[' listof_expr ']' ',' optional_arg ',' '[' listof_expr ']' ')'> to arguments" << endl; }
+arguments            : arguments_ LPAREN LBRACE listof_arg RBRACE COMMA optional_arg COMMA LBRACE listof_arg RBRACE COMMA LBRACE listof_expr RBRACE COMMA optional_arg COMMA LBRACE listof_expr RBRACE RPAREN
+                       { cout << "Reducing <arguments_ LPAREN LBRACE listof_arg RBRACE COMMA optional_arg COMMA LBRACE listof_arg RBRACE COMMA LBRACE listof_expr RBRACE COMMA optional_arg COMMA LBRACE listof_expr RBRACE RPAREN> to arguments" << endl; }
 ;
-arg                  : arg_ '(' string ',' optional_expr ')'
-                       { cout << "Reducing <arg_ '(' string ',' optional_expr ')'> to arg" << endl; }
+arg                  : arg_ LPAREN string COMMA optional_expr RPAREN
+                       { cout << "Reducing <arg_ LPAREN string COMMA optional_expr RPAREN> to arg" << endl; }
 ;
-keyword              : keyword_ '(' string ',' expr ')'
-                       { cout << "Reducing <keyword_ '(' string ',' expr ')'> to keyword" << endl; }
+keyword              : keyword_ LPAREN string COMMA expr RPAREN
+                       { cout << "Reducing <keyword_ LPAREN string COMMA expr RPAREN> to keyword" << endl; }
 ;
-alias                : alias_ '(' string ',' optional_identifier ')'
-                       { cout << "Reducing <alias_ '(' string ',' optional_identifier ')'> to alias" << endl; }
+alias                : alias_ LPAREN string COMMA optional_identifier RPAREN
+                       { cout << "Reducing <alias_ LPAREN string COMMA optional_identifier RPAREN> to alias" << endl; }
 ;
-withitem             : withitem_ '(' expr ',' optional_expr ')'
-                       { cout << "Reducing <withitem_ '(' expr ',' optional_expr ')'> to withitem" << endl; }
+withitem             : withitem_ LPAREN expr COMMA optional_expr RPAREN
+                       { cout << "Reducing <withitem_ LPAREN expr COMMA optional_expr RPAREN> to withitem" << endl; }
 ;
 optional_expr        : expr
                        { cout << "Reducing <expr> to optional_expr" << endl; }
@@ -364,78 +374,78 @@ optional_arg         : arg
                      | None
                        { cout << "Reducing <None> to optional_arg" << endl; }
 ;
-listof_stmt          : stmt ',' listof_stmt
-                       { cout << "Reducing <stmt ',' listof_stmt> to listof_stmt" << endl; }
+listof_stmt          : stmt COMMA listof_stmt
+                       { cout << "Reducing <stmt COMMA listof_stmt> to listof_stmt" << endl; }
                      | stmt
                        { cout << "Reducing <stmt> to listof_stmt" << endl; }
                      | /* empty */
                        { cout << "Reducing </* empty */> to listof_stmt" << endl; }
 ;
-listof_expr          : expr ',' listof_expr
-                       { cout << "Reducing <expr ',' listof_expr> to listof_expr" << endl; }
+listof_expr          : expr COMMA listof_expr
+                       { cout << "Reducing <expr COMMA listof_expr> to listof_expr" << endl; }
                      | expr
                        { cout << "Reducing <expr> to listof_expr" << endl; }
                      | /* empty */
                        { cout << "Reducing </* empty */> to listof_expr" << endl; }
 ;
-listof_keyword       : keyword ',' listof_keyword
-                       { cout << "Reducing <keyword ',' listof_keyword> to listof_keyword" << endl; }
+listof_keyword       : keyword COMMA listof_keyword
+                       { cout << "Reducing <keyword COMMA listof_keyword> to listof_keyword" << endl; }
                      | keyword
                        { cout << "Reducing <keyword> to listof_keyword" << endl; }
                      | /* empty */
                        { cout << "Reducing </* empty */> to listof_keyword" << endl; }
 ;
-listof_withitem      : withitem ',' listof_withitem
-                       { cout << "Reducing <withitem ',' listof_withitem> to listof_withitem" << endl; }
+listof_withitem      : withitem COMMA listof_withitem
+                       { cout << "Reducing <withitem COMMA listof_withitem> to listof_withitem" << endl; }
                      | withitem
                        { cout << "Reducing <withitem> to listof_withitem" << endl; }
                      | /* empty */
                        { cout << "Reducing </* empty */> to listof_withitem" << endl; }
 ;
-listof_excepthandler : excepthandler ',' listof_excepthandler
-                       { cout << "Reducing <excepthandler ',' listof_excepthandler> to listof_excepthandler" << endl; }
+listof_excepthandler : excepthandler COMMA listof_excepthandler
+                       { cout << "Reducing <excepthandler COMMA listof_excepthandler> to listof_excepthandler" << endl; }
                      | excepthandler
                        { cout << "Reducing <excepthandler> to listof_excepthandler" << endl; }
                      | /* empty */
                        { cout << "Reducing </* empty */> to listof_excepthandler" << endl; }
 ;
-listof_alias         : alias ',' listof_alias
-                       { cout << "Reducing <alias ',' listof_alias> to listof_alias" << endl; }
+listof_alias         : alias COMMA listof_alias
+                       { cout << "Reducing <alias COMMA listof_alias> to listof_alias" << endl; }
                      | alias
                        { cout << "Reducing <alias> to listof_alias" << endl; }
                      | /* empty */
                        { cout << "Reducing </* empty */> to listof_alias" << endl; }
 ;
-listof_identifier    : string ',' listof_identifier
-                       { cout << "Reducing <string ',' listof_identifier> to listof_identifier" << endl; }
+listof_identifier    : string COMMA listof_identifier
+                       { cout << "Reducing <string COMMA listof_identifier> to listof_identifier" << endl; }
                      | string
                        { cout << "Reducing <string> to listof_identifier" << endl; }
                      | /* empty */
                        { cout << "Reducing </* empty */> to listof_identifier" << endl; }
 ;
-listof_comprehension : comprehension ',' listof_comprehension
-                       { cout << "Reducing <comprehension ',' listof_comprehension> to listof_comprehension" << endl; }
+listof_comprehension : comprehension COMMA listof_comprehension
+                       { cout << "Reducing <comprehension COMMA listof_comprehension> to listof_comprehension" << endl; }
                      | comprehension
                        { cout << "Reducing <comprehension> to listof_comprehension" << endl; }
                      | /* empty */
                        { cout << "Reducing </* empty */> to listof_comprehension" << endl; }
 ;
-listof_cmpop         : cmpop ',' listof_cmpop
-                       { cout << "Reducing <cmpop ',' listof_cmpop> to listof_cmpop" << endl; }
+listof_cmpop         : cmpop COMMA listof_cmpop
+                       { cout << "Reducing <cmpop COMMA listof_cmpop> to listof_cmpop" << endl; }
                      | cmpop
                        { cout << "Reducing <cmpop> to listof_cmpop" << endl; }
                      | /* empty */
                        { cout << "Reducing </* empty */> to listof_cmpop" << endl; }
 ;
-listof_slice         : slice ',' listof_slice
-                       { cout << "Reducing <slice ',' listof_slice> to listof_slice" << endl; }
+listof_slice         : slice COMMA listof_slice
+                       { cout << "Reducing <slice COMMA listof_slice> to listof_slice" << endl; }
                      | slice
                        { cout << "Reducing <slice> to listof_slice" << endl; }
                      | /* empty */
                        { cout << "Reducing </* empty */> to listof_slice" << endl; }
 ;
-listof_arg           : arg ',' listof_arg
-                       { cout << "Reducing <arg ',' listof_arg> to listof_arg" << endl; }
+listof_arg           : arg COMMA listof_arg
+                       { cout << "Reducing <arg COMMA listof_arg> to listof_arg" << endl; }
                      | arg
                        { cout << "Reducing <arg> to listof_arg" << endl; }
                      | /* empty */

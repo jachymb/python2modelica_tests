@@ -1,14 +1,8 @@
 %{
-#include <iostream>
-#include "astparser.tab.h"
-using std::cout;
-using std::cerr;
-using std::endl;
-extern YYSTYPE yylval;
-#define YY_DECL extern "C" int yylex()
-
 
 %}
+
+%x pyast_string
 
 intpart        [0-9]+
 fraction       \.[0-9]+
@@ -19,130 +13,134 @@ floatnumber    ({pointfloat}|{exponentfloat})
 imagnumber     ({floatnumber}|{intpart})[jJ]
 
 object         ({intpart}|{floatnumber}|{imagnumber})
-%%
-Add		{ cout << "Found token: Add" << endl; return Add; }
-And		{ cout << "Found token: And" << endl; return And; }
-Assert		{ cout << "Found token: Assert" << endl; return Assert; }
-Assign		{ cout << "Found token: Assign" << endl; return Assign; }
-Attribute	{ cout << "Found token: Attribute" << endl; return Attribute; }
-AugAssign	{ cout << "Found token: AugAssign" << endl; return AugAssign; }
-AugLoad		{ cout << "Found token: AugLoad" << endl; return AugLoad; }
-AugStore	{ cout << "Found token: AugStore" << endl; return AugStore; }
-BinOp		{ cout << "Found token: BinOp" << endl; return BinOp; }
-BitAnd		{ cout << "Found token: BitAnd" << endl; return BitAnd; }
-BitOr		{ cout << "Found token: BitOr" << endl; return BitOr; }
-BitXor		{ cout << "Found token: BitXor" << endl; return BitXor; }
-BoolOp		{ cout << "Found token: BoolOp" << endl; return BoolOp; }
-Break		{ cout << "Found token: Break" << endl; return Break; }
-Bytes		{ cout << "Found token: Bytes" << endl; return Bytes; }
-Call		{ cout << "Found token: Call" << endl; return Call; }
-ClassDef	{ cout << "Found token: ClassDef" << endl; return ClassDef; }
-Compare		{ cout << "Found token: Compare" << endl; return Compare; }
-Continue	{ cout << "Found token: Continue" << endl; return Continue; }
-Del		{ cout << "Found token: Del" << endl; return Del; }
-Delete		{ cout << "Found token: Delete" << endl; return Delete; }
-Dict		{ cout << "Found token: Dict" << endl; return Dict; }
-DictComp	{ cout << "Found token: DictComp" << endl; return DictComp; }
-Div		{ cout << "Found token: Div" << endl; return Div; }
-Ellipsis	{ cout << "Found token: Ellipsis" << endl; return Ellipsis; }
-Eq		{ cout << "Found token: Eq" << endl; return Eq; }
-ExceptHandler	{ cout << "Found token: ExceptHandler" << endl; return ExceptHandler; }
-Expr		{ cout << "Found token: Expr" << endl; return Expr; }
-ExtSlice	{ cout << "Found token: ExtSlice" << endl; return ExtSlice; }
-FloorDiv	{ cout << "Found token: FloorDiv" << endl; return FloorDiv; }
-For		{ cout << "Found token: For" << endl; return For; }
-FunctionDef	{ cout << "Found token: FunctionDef" << endl; return FunctionDef; }
-GeneratorExp	{ cout << "Found token: GeneratorExp" << endl; return GeneratorExp; }
-Global		{ cout << "Found token: Global" << endl; return Global; }
-Gt		{ cout << "Found token: Gt" << endl; return Gt; }
-GtE		{ cout << "Found token: GtE" << endl; return GtE; }
-If		{ cout << "Found token: If" << endl; return If; }
-IfExp		{ cout << "Found token: IfExp" << endl; return IfExp; }
-Import		{ cout << "Found token: Import" << endl; return Import; }
-ImportFrom	{ cout << "Found token: ImportFrom" << endl; return ImportFrom; }
-In		{ cout << "Found token: In" << endl; return In; }
-Index		{ cout << "Found token: Index" << endl; return Index; }
-Invert		{ cout << "Found token: Invert" << endl; return Invert; }
-Is		{ cout << "Found token: Is" << endl; return Is; }
-IsNot		{ cout << "Found token: IsNot" << endl; return IsNot; }
-LShift		{ cout << "Found token: LShift" << endl; return LShift; }
-Lambda		{ cout << "Found token: Lambda" << endl; return Lambda; }
-List		{ cout << "Found token: List" << endl; return List; }
-ListComp	{ cout << "Found token: ListComp" << endl; return ListComp; }
-Load		{ cout << "Found token: Load" << endl; return Load; }
-Lt		{ cout << "Found token: Lt" << endl; return Lt; }
-LtE		{ cout << "Found token: LtE" << endl; return LtE; }
-Mod		{ cout << "Found token: Mod" << endl; return Mod; }
-Module		{ cout << "Found token: Module" << endl; return Module; }
-Mult		{ cout << "Found token: Mult" << endl; return Mult; }
-Name		{ cout << "Found token: Name" << endl; return Name; }
-NameConstant	{ cout << "Found token: NameConstant" << endl; return NameConstant; }
-None		{ cout << "Found token: None" << endl; return None; }
-Nonlocal	{ cout << "Found token: Nonlocal" << endl; return Nonlocal; }
-Not		{ cout << "Found token: Not" << endl; return Not; }
-NotEq		{ cout << "Found token: NotEq" << endl; return NotEq; }
-NotIn		{ cout << "Found token: NotIn" << endl; return NotIn; }
-Num		{ cout << "Found token: Num" << endl; return Num; }
-Or		{ cout << "Found token: Or" << endl; return Or; }
-Param		{ cout << "Found token: Param" << endl; return Param; }
-Pass		{ cout << "Found token: Pass" << endl; return Pass; }
-Pow		{ cout << "Found token: Pow" << endl; return Pow; }
-RShift		{ cout << "Found token: RShift" << endl; return RShift; }
-Raise		{ cout << "Found token: Raise" << endl; return Raise; }
-Return		{ cout << "Found token: Return" << endl; return Return; }
-Set		{ cout << "Found token: Set" << endl; return Set; }
-SetComp		{ cout << "Found token: SetComp" << endl; return SetComp; }
-Slice		{ cout << "Found token: Slice" << endl; return Slice; }
-Starred		{ cout << "Found token: Starred" << endl; return Starred; }
-Store		{ cout << "Found token: Store" << endl; return Store; }
-Str		{ cout << "Found token: Str" << endl; return Str; }
-Sub		{ cout << "Found token: Sub" << endl; return Sub; }
-Subscript	{ cout << "Found token: Subscript" << endl; return Subscript; }
-Try		{ cout << "Found token: Try" << endl; return Try; }
-Tuple		{ cout << "Found token: Tuple" << endl; return Tuple; }
-UAdd		{ cout << "Found token: UAdd" << endl; return UAdd; }
-USub		{ cout << "Found token: USub" << endl; return USub; }
-UnaryOp		{ cout << "Found token: UnaryOp" << endl; return UnaryOp; }
-While		{ cout << "Found token: While" << endl; return While; }
-With		{ cout << "Found token: With" << endl; return With; }
-Yield		{ cout << "Found token: Yield" << endl; return Yield; }
-YieldFrom	{ cout << "Found token: YieldFrom" << endl; return YieldFrom; }
-alias		{ cout << "Found token: alias_" << endl; return alias_; /* Underscore! */ }
-arg		{ cout << "Found token: arg_" << endl; return arg_; /* Underscore! */ }
-arguments	{ cout << "Found token: arguments_" << endl; return arguments_; /* Underscore! */ }
-comprehension	{ cout << "Found token: comprehension_" << endl; return comprehension_; /* Underscore! */ }
-keyword		{ cout << "Found token: keyword_" << endl; return keyword_; /* Underscore! */ }
-withitem	{ cout << "Found token: withitem_" << endl; return withitem_; /* Underscore! */ }
-
-\'(\\.|[^'])*\'         { cout << "Found token: string " << yytext << endl;
-                         // yylval.sval = yytext; // Is it enough? Shoudln't we copy it instead?
-                          return string; }
-
-
-
-"("                     { cout << "Found token: (" << endl; return '('; }
-")"                     { cout << "Found token: )" << endl; return ')'; }
-"["                     { cout << "Found token: [" << endl; return '['; }
-"]"                     { cout << "Found token: ]" << endl; return ']'; }
-","                     { cout << "Found token: ," << endl; return ','; }
-"="                     { cout << "Found token: =" << endl; return '='; }
-"b"                     { cout << "Found token: b" << endl; return 'b'; }
-
-{object}                { cout << "Found token: object " << yytext << endl;
-                         // yylval.sval = yytext; // Is it enough? Shoudln't we copy it instead?
-                         return object;
-                        }
-
-[ \n\t\r\f]+            { }
-
-.                       { cerr << "Unknown character: " << yytext << endl; yyterminate(); }
-<<EOF>>                 yyterminate();
 
 
 %%
+"Add"		return Add;
+"And"		return And;
+"Assert"	return Assert;
+"Assign"	return Assign;
+"Attribute"	return Attribute;
+"AugAssign"	return AugAssign;
+"AugLoad"	return AugLoad;
+"AugStore"	return AugStore;
+"BinOp"		return BinOp;
+"BitAnd"	return BitAnd;
+"BitOr"		return BitOr;
+"BitXor"	return BitXor;
+"BoolOp"	return BoolOp;
+"Break"		return Break;
+"Bytes"		return Bytes;
+"Call"		return Call;
+"ClassDef"	return ClassDef;
+"Compare"	return Compare;
+"Continue"	return Continue;
+"Del"		return Del;
+"Delete"	return Delete;
+"Dict"		return Dict;
+"DictComp"	return DictComp;
+"Div"		return Div;
+"Ellipsis"	return Ellipsis;
+"Eq"		return Eq;
+"ExceptHandler"	return ExceptHandler;
+"Expr"		return Expr;
+"ExtSlice"	return ExtSlice;
+"FloorDiv"	return FloorDiv;
+"For"		return For;
+"FunctionDef"	return FunctionDef;
+"GeneratorExp"	return GeneratorExp;
+"Global"	return Global;
+"Gt"		return Gt;
+"GtE"		return GtE;
+"If"		return If;
+"IfExp"		return IfExp;
+"Import"	return Import;
+"ImportFrom"	return ImportFrom;
+"In"		return In;
+"Index"		return Index;
+"Invert"	return Invert;
+"Is"		return Is;
+"IsNot"		return IsNot;
+"LShift"	return LShift;
+"Lambda"	return Lambda;
+"List"		return List;
+"ListComp"	return ListComp;
+"Load"		return Load;
+"Lt"		return Lt;
+"LtE"		return LtE;
+"Mod"		return Mod;
+"Module"	return Module;
+"Mult"		return Mult;
+"Name"		return Name;
+"NameConstant"	return NameConstant;
+"None"		return None;
+"Nonlocal"	return Nonlocal;
+"Not"		return Not;
+"NotEq"		return NotEq;
+"NotIn"		return NotIn;
+"Num"		return Num;
+"Or"		return Or;
+"Param"		return Param;
+"Pass"		return Pass;
+"Pow"		return Pow;
+"RShift"	return RShift;
+"Raise"		return Raise;
+"Return"	return Return;
+"Set"		return Set;
+"SetComp"	return SetComp;
+"Slice"		return Slice;
+"Starred"	return Starred;
+"Store"		return Store;
+"Str"		return Str;
+"Sub"		return Sub;
+"Subscript"	return Subscript;
+"Try"		return Try;
+"Tuple"		return Tuple;
+"UAdd"		return UAdd;
+"USub"		return USub;
+"UnaryOp"	return UnaryOp;
+"While"		return While;
+"With"		return With;
+"Yield"		return Yield;
+"YieldFrom"	return YieldFrom;
+"alias"		return alias_;
+"arg"		return arg_;
+"arguments"	return arguments_;
+"comprehension"	return comprehension_;
+"keyword"	return keyword_;
+"withitem"	return withitem_;
 
-/*
-int main() {
-while (yylex());
+"True"          return True;
+"False"         return False;
+
+"("             return LPAREN;
+")"             return RPAREN;
+"["             return LBRACE;
+"]"             return RBRACE;
+","             return COMMA;
+"b"             return B;
+
+[ \n\t\r\f]+  ;
+
+{object}        return object;
+
+%"\'(\\.|[^'])*\'" return string;
+
+"'"	     {
+		BEGIN(pyast_string) keepBuffer;
+             }
+
+<pyast_string>
+{
+    "\\"+"'"  { keepBuffer; }
+    "\\"+"\\" { keepBuffer; }
+    "'"       { BEGIN(INITIAL) return STRING; }
+    [^\n]     { keepBuffer; }
+    \n        { keepBuffer; }
 }
-*/
+
+
+
+
+%%
+

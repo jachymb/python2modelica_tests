@@ -1,78 +1,104 @@
-False FALSE
-None NONE
-True TRUE
-and AND
-as AS
-assert ASSERT
-break BREAK
-class CLASS
-continue CONTINUE
-def DEF
-del DEL
-elif ELIF
-else ELSE
-except EXCEPT
-finally FINALLY
-for FOR
-from FROM
-global GLOBAL
-if IF
-import IMPORT
-in IN
-is IS
-lambda LAMBDA
-nonlocal NONLOCAL
-not NOT
-or OR
-pass PASS
-raise RAISE
-return RETURN
-try TRY
-while WHILE
-with WITH
-yield YIELD
-+ ADD
-- SUB
-* MUL
-** POW
-/ DIV
-// FDIV
-% MOD
-<< LSHIFT
->> RSHIFT
-& BITWISEAND
-| BITWISEOR
-^ BITWISEXOR
-~ BITWISENOT
-< LT
-> GT
-<= LE
->= GE
-== EQ
-!= NEQ
-, COMMA
-: COLON
-. DOT
-; SEMICOLON
-@ AT
-= ASSIGNMENT
--> ANNOTATIONRETURN
-+= RADD
--= RSUB
-*= RMUL
-/= RDIV
-//= RFDIV
-%= RMOD
-&= RAND
-|= ROR
-^= RXOR
->>= RRSHIFT
-<<= RLSHIFT
-**= RPOW
-( LPARENTHESIS
-) RPARENTHESIS
-[ LSQUAREBRACE
-] RSQUAREBRACE
-{ LCURLYBRACE
-} RCURLYBRACE
-... ELLIPSIS
+*/
+/*
+Add
+And
+Assert
+Assign
+Attribute
+AugAssign
+AugLoad
+AugStore
+B
+BinOp
+BitAnd
+BitOr
+BitXor
+BoolOp
+Break
+Bytes
+COMMA
+Call
+ClassDef
+Compare
+Continue
+Del
+Delete
+Dict
+DictComp
+Div
+Ellipsis
+Eq
+ExceptHandler
+Expr
+ExtSlice
+False
+FloorDiv
+For
+FunctionDef
+GeneratorExp
+Global
+Gt
+GtE
+If
+IfExp
+Import
+ImportFrom
+In
+Index
+Invert
+Is
+IsNot
+LBRACE
+LPAREN
+LShift
+Lambda
+List
+ListComp
+Load
+Lt
+LtE
+Mod
+Module
+Mult
+Name
+NameConstant
+None
+Nonlocal
+Not
+NotEq
+NotIn
+Num
+Or
+Param
+Pass
+Pow
+RBRACE
+RPAREN
+RShift
+Raise
+Return
+Set
+SetComp
+Slice
+Starred
+Store
+Str
+Sub
+Subscript
+True
+Try
+Tuple
+UAdd
+USub
+UnaryOp
+While
+With
+Yield
+YieldFrom
+alias_
+arg_
+arguments_
+comprehension_
+empty
+keyword_
+withitem_
