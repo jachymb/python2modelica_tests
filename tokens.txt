@@ -1,5 +1,4 @@
-*/
-/*
+
 Add
 And
 Assert
@@ -99,6 +98,5 @@ alias_
 arg_
 arguments_
 comprehension_
-empty
 keyword_
 withitem_

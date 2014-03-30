@@ -80,6 +80,7 @@ if __name__ == "__main__":
                 prods = production.split(" ")
                 constructor = prods[0]
                 recordname = constructor.upper().replace("_", "")
+                if recordname == "NONE": recordname = "PYNONE" # To not confuse with Option "NONE"
 
 
                 # Make records without params oneliners
@@ -117,7 +118,7 @@ if __name__ == "__main__":
                             print_a("\t\tOption<%s>\t%s;" % (converttype(x[9:]), argname))
                         else:
                             print_a("\t\t%s\t%s;" % (converttype(x), argname))
-                        constructorparams.append("$"+str(pi)+"["+argname+"]")
+                        constructorparams.append("$"+str(pi+1)+"["+argname+"]")
                     print_a("\tend "+recordname+";")
                     i+=1
 
