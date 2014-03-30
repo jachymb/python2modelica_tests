@@ -1,297 +1,304 @@
 mod                  : Module LPAREN LBRACE listof_stmt RBRACE RPAREN
-                       { cout << "Reducing <Module LPAREN LBRACE listof_stmt RBRACE RPAREN> to mod" << endl; }
+                       { $$[mod] = Absyn.MODULE($4[body]); }
 ;
 stmt                 : FunctionDef LPAREN string COMMA arguments COMMA LBRACE listof_stmt RBRACE COMMA LBRACE listof_expr RBRACE COMMA optional_expr RPAREN
-                       { cout << "Reducing <FunctionDef LPAREN string COMMA arguments COMMA LBRACE listof_stmt RBRACE COMMA LBRACE listof_expr RBRACE COMMA optional_expr RPAREN> to stmt" << endl; }
+                       { $$[stmt] = Absyn.FUNCTIONDEF($3[name], $5[args], $8[body], $12[decorator_list], $15[returns]); }
                      | ClassDef LPAREN string COMMA LBRACE listof_expr RBRACE COMMA LBRACE listof_keyword RBRACE COMMA optional_expr COMMA optional_expr COMMA LBRACE listof_stmt RBRACE COMMA LBRACE listof_expr RBRACE RPAREN
-                       { cout << "Reducing <ClassDef LPAREN string COMMA LBRACE listof_expr RBRACE COMMA LBRACE listof_keyword RBRACE COMMA optional_expr COMMA optional_expr COMMA LBRACE listof_stmt RBRACE COMMA LBRACE listof_expr RBRACE RPAREN> to stmt" << endl; }
+                       { $$[stmt] = Absyn.CLASSDEF($3[name], $6[bases], $10[keywords], $13[starargs], $15[kwargs], $18[body], $22[decorator_list]); }
                      | Return LPAREN optional_expr RPAREN
-                       { cout << "Reducing <Return LPAREN optional_expr RPAREN> to stmt" << endl; }
+                       { $$[stmt] = Absyn.RETURN($3[value]); }
                      | Delete LPAREN LBRACE listof_expr RBRACE RPAREN
-                       { cout << "Reducing <Delete LPAREN LBRACE listof_expr RBRACE RPAREN> to stmt" << endl; }
+                       { $$[stmt] = Absyn.DELETE($4[targets]); }
                      | Assign LPAREN LBRACE listof_expr RBRACE COMMA expr RPAREN
-                       { cout << "Reducing <Assign LPAREN LBRACE listof_expr RBRACE COMMA expr RPAREN> to stmt" << endl; }
+                       { $$[stmt] = Absyn.ASSIGN($4[targets], $7[value]); }
                      | AugAssign LPAREN expr COMMA operator COMMA expr RPAREN
-                       { cout << "Reducing <AugAssign LPAREN expr COMMA operator COMMA expr RPAREN> to stmt" << endl; }
+                       { $$[stmt] = Absyn.AUGASSIGN($3[target], $5[op], $7[value]); }
                      | For LPAREN expr COMMA expr COMMA LBRACE listof_stmt RBRACE COMMA LBRACE listof_stmt RBRACE RPAREN
-                       { cout << "Reducing <For LPAREN expr COMMA expr COMMA LBRACE listof_stmt RBRACE COMMA LBRACE listof_stmt RBRACE RPAREN> to stmt" << endl; }
+                       { $$[stmt] = Absyn.FOR($3[target], $5[iter], $8[body], $12[orelse]); }
                      | While LPAREN expr COMMA LBRACE listof_stmt RBRACE COMMA LBRACE listof_stmt RBRACE RPAREN
-                       { cout << "Reducing <While LPAREN expr COMMA LBRACE listof_stmt RBRACE COMMA LBRACE listof_stmt RBRACE RPAREN> to stmt" << endl; }
+                       { $$[stmt] = Absyn.WHILE($3[test], $6[body], $10[orelse]); }
                      | If LPAREN expr COMMA LBRACE listof_stmt RBRACE COMMA LBRACE listof_stmt RBRACE RPAREN
-                       { cout << "Reducing <If LPAREN expr COMMA LBRACE listof_stmt RBRACE COMMA LBRACE listof_stmt RBRACE RPAREN> to stmt" << endl; }
+                       { $$[stmt] = Absyn.IF($3[test], $6[body], $10[orelse]); }
                      | With LPAREN LBRACE listof_withitem RBRACE COMMA LBRACE listof_stmt RBRACE RPAREN
-                       { cout << "Reducing <With LPAREN LBRACE listof_withitem RBRACE COMMA LBRACE listof_stmt RBRACE RPAREN> to stmt" << endl; }
+                       { $$[stmt] = Absyn.WITH($4[items], $8[body]); }
                      | Raise LPAREN optional_expr COMMA optional_expr RPAREN
-                       { cout << "Reducing <Raise LPAREN optional_expr COMMA optional_expr RPAREN> to stmt" << endl; }
+                       { $$[stmt] = Absyn.RAISE($3[exc], $5[cause]); }
                      | Try LPAREN LBRACE listof_stmt RBRACE COMMA LBRACE listof_excepthandler RBRACE COMMA LBRACE listof_stmt RBRACE COMMA LBRACE listof_stmt RBRACE RPAREN
-                       { cout << "Reducing <Try LPAREN LBRACE listof_stmt RBRACE COMMA LBRACE listof_excepthandler RBRACE COMMA LBRACE listof_stmt RBRACE COMMA LBRACE listof_stmt RBRACE RPAREN> to stmt" << endl; }
+                       { $$[stmt] = Absyn.TRY($4[body], $8[handlers], $12[orelse], $16[finalbody]); }
                      | Assert LPAREN expr COMMA optional_expr RPAREN
-                       { cout << "Reducing <Assert LPAREN expr COMMA optional_expr RPAREN> to stmt" << endl; }
+                       { $$[stmt] = Absyn.ASSERT($3[test], $5[msg]); }
                      | Import LPAREN LBRACE listof_alias RBRACE RPAREN
-                       { cout << "Reducing <Import LPAREN LBRACE listof_alias RBRACE RPAREN> to stmt" << endl; }
+                       { $$[stmt] = Absyn.IMPORT($4[names]); }
                      | ImportFrom LPAREN optional_identifier COMMA LBRACE listof_alias RBRACE COMMA optional_object RPAREN
-                       { cout << "Reducing <ImportFrom LPAREN optional_identifier COMMA LBRACE listof_alias RBRACE COMMA optional_object RPAREN> to stmt" << endl; }
+                       { $$[stmt] = Absyn.IMPORTFROM($3[module], $6[names], $9[level]); }
                      | Global LPAREN LBRACE listof_identifier RBRACE RPAREN
-                       { cout << "Reducing <Global LPAREN LBRACE listof_identifier RBRACE RPAREN> to stmt" << endl; }
+                       { $$[stmt] = Absyn.GLOBAL($4[names]); }
                      | Nonlocal LPAREN LBRACE listof_identifier RBRACE RPAREN
-                       { cout << "Reducing <Nonlocal LPAREN LBRACE listof_identifier RBRACE RPAREN> to stmt" << endl; }
+                       { $$[stmt] = Absyn.NONLOCAL($4[names]); }
                      | Expr LPAREN expr RPAREN
-                       { cout << "Reducing <Expr LPAREN expr RPAREN> to stmt" << endl; }
+                       { $$[stmt] = Absyn.EXPR($3[value]); }
                      | Pass LPAREN RPAREN
-                       { cout << "Reducing <Pass LPAREN RPAREN> to stmt" << endl; }
+                       { $$[stmt] = Absyn.PASS(); }
                      | Break LPAREN RPAREN
-                       { cout << "Reducing <Break LPAREN RPAREN> to stmt" << endl; }
+                       { $$[stmt] = Absyn.BREAK(); }
                      | Continue LPAREN RPAREN
-                       { cout << "Reducing <Continue LPAREN RPAREN> to stmt" << endl; }
+                       { $$[stmt] = Absyn.CONTINUE(); }
 ;
 expr                 : BoolOp LPAREN boolop COMMA LBRACE listof_expr RBRACE RPAREN
-                       { cout << "Reducing <BoolOp LPAREN boolop COMMA LBRACE listof_expr RBRACE RPAREN> to expr" << endl; }
+                       { $$[expr] = Absyn.BOOLOP($3[op], $6[values]); }
                      | BinOp LPAREN expr COMMA operator COMMA expr RPAREN
-                       { cout << "Reducing <BinOp LPAREN expr COMMA operator COMMA expr RPAREN> to expr" << endl; }
+                       { $$[expr] = Absyn.BINOP($3[left], $5[op], $7[right]); }
                      | UnaryOp LPAREN unaryop COMMA expr RPAREN
-                       { cout << "Reducing <UnaryOp LPAREN unaryop COMMA expr RPAREN> to expr" << endl; }
+                       { $$[expr] = Absyn.UNARYOP($3[op], $5[operand]); }
                      | Lambda LPAREN arguments COMMA expr RPAREN
-                       { cout << "Reducing <Lambda LPAREN arguments COMMA expr RPAREN> to expr" << endl; }
+                       { $$[expr] = Absyn.LAMBDA($3[args], $5[body]); }
                      | IfExp LPAREN expr COMMA expr COMMA expr RPAREN
-                       { cout << "Reducing <IfExp LPAREN expr COMMA expr COMMA expr RPAREN> to expr" << endl; }
+                       { $$[expr] = Absyn.IFEXP($3[test], $5[body], $7[orelse]); }
                      | Dict LPAREN LBRACE listof_expr RBRACE COMMA LBRACE listof_expr RBRACE RPAREN
-                       { cout << "Reducing <Dict LPAREN LBRACE listof_expr RBRACE COMMA LBRACE listof_expr RBRACE RPAREN> to expr" << endl; }
+                       { $$[expr] = Absyn.DICT($4[keys], $8[values]); }
                      | Set LPAREN LBRACE listof_expr RBRACE RPAREN
-                       { cout << "Reducing <Set LPAREN LBRACE listof_expr RBRACE RPAREN> to expr" << endl; }
+                       { $$[expr] = Absyn.SET($4[elts]); }
                      | ListComp LPAREN expr COMMA LBRACE listof_comprehension RBRACE RPAREN
-                       { cout << "Reducing <ListComp LPAREN expr COMMA LBRACE listof_comprehension RBRACE RPAREN> to expr" << endl; }
+                       { $$[expr] = Absyn.LISTCOMP($3[elt], $6[generators]); }
                      | SetComp LPAREN expr COMMA LBRACE listof_comprehension RBRACE RPAREN
-                       { cout << "Reducing <SetComp LPAREN expr COMMA LBRACE listof_comprehension RBRACE RPAREN> to expr" << endl; }
+                       { $$[expr] = Absyn.SETCOMP($3[elt], $6[generators]); }
                      | DictComp LPAREN expr COMMA expr COMMA LBRACE listof_comprehension RBRACE RPAREN
-                       { cout << "Reducing <DictComp LPAREN expr COMMA expr COMMA LBRACE listof_comprehension RBRACE RPAREN> to expr" << endl; }
+                       { $$[expr] = Absyn.DICTCOMP($3[key], $5[value], $8[generators]); }
                      | GeneratorExp LPAREN expr COMMA LBRACE listof_comprehension RBRACE RPAREN
-                       { cout << "Reducing <GeneratorExp LPAREN expr COMMA LBRACE listof_comprehension RBRACE RPAREN> to expr" << endl; }
+                       { $$[expr] = Absyn.GENERATOREXP($3[elt], $6[generators]); }
                      | Yield LPAREN optional_expr RPAREN
-                       { cout << "Reducing <Yield LPAREN optional_expr RPAREN> to expr" << endl; }
+                       { $$[expr] = Absyn.YIELD($3[value]); }
                      | YieldFrom LPAREN expr RPAREN
-                       { cout << "Reducing <YieldFrom LPAREN expr RPAREN> to expr" << endl; }
+                       { $$[expr] = Absyn.YIELDFROM($3[value]); }
                      | Compare LPAREN expr COMMA LBRACE listof_cmpop RBRACE COMMA LBRACE listof_expr RBRACE RPAREN
-                       { cout << "Reducing <Compare LPAREN expr COMMA LBRACE listof_cmpop RBRACE COMMA LBRACE listof_expr RBRACE RPAREN> to expr" << endl; }
+                       { $$[expr] = Absyn.COMPARE($3[left], $6[ops], $10[comparators]); }
                      | Call LPAREN expr COMMA LBRACE listof_expr RBRACE COMMA LBRACE listof_keyword RBRACE COMMA optional_expr COMMA optional_expr RPAREN
-                       { cout << "Reducing <Call LPAREN expr COMMA LBRACE listof_expr RBRACE COMMA LBRACE listof_keyword RBRACE COMMA optional_expr COMMA optional_expr RPAREN> to expr" << endl; }
+                       { $$[expr] = Absyn.CALL($3[func], $6[args], $10[keywords], $13[starargs], $15[kwargs]); }
                      | Num LPAREN object RPAREN
-                       { cout << "Reducing <Num LPAREN object RPAREN> to expr" << endl; }
+                       { $$[expr] = Absyn.NUM($3[n]); }
                      | Str LPAREN string RPAREN
-                       { cout << "Reducing <Str LPAREN string RPAREN> to expr" << endl; }
+                       { $$[expr] = Absyn.STR($3[s]); }
                      | Bytes LPAREN B string RPAREN
-                       { cout << "Reducing <Bytes LPAREN B string RPAREN> to expr" << endl; }
+                       { $$[expr] = Absyn.BYTES($4[s]); }
                      | NameConstant LPAREN singleton RPAREN
-                       { cout << "Reducing <NameConstant LPAREN singleton RPAREN> to expr" << endl; }
+                       { $$[expr] = Absyn.NAMECONSTANT($3[value]); }
                      | Ellipsis LPAREN RPAREN
-                       { cout << "Reducing <Ellipsis LPAREN RPAREN> to expr" << endl; }
+                       { $$[expr] = Absyn.ELLIPSIS(); }
                      | Attribute LPAREN expr COMMA string COMMA expr_context RPAREN
-                       { cout << "Reducing <Attribute LPAREN expr COMMA string COMMA expr_context RPAREN> to expr" << endl; }
+                       { $$[expr] = Absyn.ATTRIBUTE($3[value], $5[attr], $7[ctx]); }
                      | Subscript LPAREN expr COMMA slice COMMA expr_context RPAREN
-                       { cout << "Reducing <Subscript LPAREN expr COMMA slice COMMA expr_context RPAREN> to expr" << endl; }
+                       { $$[expr] = Absyn.SUBSCRIPT($3[value], $5[subscriptslice], $7[ctx]); }
                      | Starred LPAREN expr COMMA expr_context RPAREN
-                       { cout << "Reducing <Starred LPAREN expr COMMA expr_context RPAREN> to expr" << endl; }
+                       { $$[expr] = Absyn.STARRED($3[value], $5[ctx]); }
                      | Name LPAREN string COMMA expr_context RPAREN
-                       { cout << "Reducing <Name LPAREN string COMMA expr_context RPAREN> to expr" << endl; }
+                       { $$[expr] = Absyn.NAME($3[id], $5[ctx]); }
                      | List LPAREN LBRACE listof_expr RBRACE COMMA expr_context RPAREN
-                       { cout << "Reducing <List LPAREN LBRACE listof_expr RBRACE COMMA expr_context RPAREN> to expr" << endl; }
+                       { $$[expr] = Absyn.LIST($4[elts], $7[ctx]); }
                      | Tuple LPAREN LBRACE listof_expr RBRACE COMMA expr_context RPAREN
-                       { cout << "Reducing <Tuple LPAREN LBRACE listof_expr RBRACE COMMA expr_context RPAREN> to expr" << endl; }
+                       { $$[expr] = Absyn.TUPLE($4[elts], $7[ctx]); }
 ;
 expr_context         : Load LPAREN RPAREN
-                       { cout << "Reducing <Load LPAREN RPAREN> to expr_context" << endl; }
+                       { $$[expr_context] = Absyn.LOAD(); }
                      | Store LPAREN RPAREN
-                       { cout << "Reducing <Store LPAREN RPAREN> to expr_context" << endl; }
+                       { $$[expr_context] = Absyn.STORE(); }
                      | Del LPAREN RPAREN
-                       { cout << "Reducing <Del LPAREN RPAREN> to expr_context" << endl; }
+                       { $$[expr_context] = Absyn.DEL(); }
                      | AugLoad LPAREN RPAREN
-                       { cout << "Reducing <AugLoad LPAREN RPAREN> to expr_context" << endl; }
+                       { $$[expr_context] = Absyn.AUGLOAD(); }
                      | AugStore LPAREN RPAREN
-                       { cout << "Reducing <AugStore LPAREN RPAREN> to expr_context" << endl; }
+                       { $$[expr_context] = Absyn.AUGSTORE(); }
                      | Param LPAREN RPAREN
-                       { cout << "Reducing <Param LPAREN RPAREN> to expr_context" << endl; }
+                       { $$[expr_context] = Absyn.PARAM(); }
 ;
 slice                : Slice LPAREN optional_expr COMMA optional_expr COMMA optional_expr RPAREN
-                       { cout << "Reducing <Slice LPAREN optional_expr COMMA optional_expr COMMA optional_expr RPAREN> to slice" << endl; }
+                       { $$[slice] = Absyn.SLICE($3[lower], $5[upper], $7[step]); }
                      | ExtSlice LPAREN LBRACE listof_slice RBRACE RPAREN
-                       { cout << "Reducing <ExtSlice LPAREN LBRACE listof_slice RBRACE RPAREN> to slice" << endl; }
+                       { $$[slice] = Absyn.EXTSLICE($4[dims]); }
                      | Index LPAREN expr RPAREN
-                       { cout << "Reducing <Index LPAREN expr RPAREN> to slice" << endl; }
+                       { $$[slice] = Absyn.INDEX($3[value]); }
 ;
 boolop               : And LPAREN RPAREN
-                       { cout << "Reducing <And LPAREN RPAREN> to boolop" << endl; }
+                       { $$[boolop] = Absyn.AND(); }
                      | Or LPAREN RPAREN
-                       { cout << "Reducing <Or LPAREN RPAREN> to boolop" << endl; }
+                       { $$[boolop] = Absyn.OR(); }
 ;
 operator             : Add LPAREN RPAREN
-                       { cout << "Reducing <Add LPAREN RPAREN> to operator" << endl; }
+                       { $$[operator] = Absyn.ADD(); }
                      | Sub LPAREN RPAREN
-                       { cout << "Reducing <Sub LPAREN RPAREN> to operator" << endl; }
+                       { $$[operator] = Absyn.SUB(); }
                      | Mult LPAREN RPAREN
-                       { cout << "Reducing <Mult LPAREN RPAREN> to operator" << endl; }
+                       { $$[operator] = Absyn.MULT(); }
                      | Div LPAREN RPAREN
-                       { cout << "Reducing <Div LPAREN RPAREN> to operator" << endl; }
+                       { $$[operator] = Absyn.DIV(); }
                      | Mod LPAREN RPAREN
-                       { cout << "Reducing <Mod LPAREN RPAREN> to operator" << endl; }
+                       { $$[operator] = Absyn.MOD(); }
                      | Pow LPAREN RPAREN
-                       { cout << "Reducing <Pow LPAREN RPAREN> to operator" << endl; }
+                       { $$[operator] = Absyn.POW(); }
                      | LShift LPAREN RPAREN
-                       { cout << "Reducing <LShift LPAREN RPAREN> to operator" << endl; }
+                       { $$[operator] = Absyn.LSHIFT(); }
                      | RShift LPAREN RPAREN
-                       { cout << "Reducing <RShift LPAREN RPAREN> to operator" << endl; }
+                       { $$[operator] = Absyn.RSHIFT(); }
                      | BitOr LPAREN RPAREN
-                       { cout << "Reducing <BitOr LPAREN RPAREN> to operator" << endl; }
+                       { $$[operator] = Absyn.BITOR(); }
                      | BitXor LPAREN RPAREN
-                       { cout << "Reducing <BitXor LPAREN RPAREN> to operator" << endl; }
+                       { $$[operator] = Absyn.BITXOR(); }
                      | BitAnd LPAREN RPAREN
-                       { cout << "Reducing <BitAnd LPAREN RPAREN> to operator" << endl; }
+                       { $$[operator] = Absyn.BITAND(); }
                      | FloorDiv LPAREN RPAREN
-                       { cout << "Reducing <FloorDiv LPAREN RPAREN> to operator" << endl; }
+                       { $$[operator] = Absyn.FLOORDIV(); }
 ;
 unaryop              : Invert LPAREN RPAREN
-                       { cout << "Reducing <Invert LPAREN RPAREN> to unaryop" << endl; }
+                       { $$[unaryop] = Absyn.INVERT(); }
                      | Not LPAREN RPAREN
-                       { cout << "Reducing <Not LPAREN RPAREN> to unaryop" << endl; }
+                       { $$[unaryop] = Absyn.NOT(); }
                      | UAdd LPAREN RPAREN
-                       { cout << "Reducing <UAdd LPAREN RPAREN> to unaryop" << endl; }
+                       { $$[unaryop] = Absyn.UADD(); }
                      | USub LPAREN RPAREN
-                       { cout << "Reducing <USub LPAREN RPAREN> to unaryop" << endl; }
+                       { $$[unaryop] = Absyn.USUB(); }
 ;
 cmpop                : Eq LPAREN RPAREN
-                       { cout << "Reducing <Eq LPAREN RPAREN> to cmpop" << endl; }
+                       { $$[cmpop] = Absyn.EQ(); }
                      | NotEq LPAREN RPAREN
-                       { cout << "Reducing <NotEq LPAREN RPAREN> to cmpop" << endl; }
+                       { $$[cmpop] = Absyn.NOTEQ(); }
                      | Lt LPAREN RPAREN
-                       { cout << "Reducing <Lt LPAREN RPAREN> to cmpop" << endl; }
+                       { $$[cmpop] = Absyn.LT(); }
                      | LtE LPAREN RPAREN
-                       { cout << "Reducing <LtE LPAREN RPAREN> to cmpop" << endl; }
+                       { $$[cmpop] = Absyn.LTE(); }
                      | Gt LPAREN RPAREN
-                       { cout << "Reducing <Gt LPAREN RPAREN> to cmpop" << endl; }
+                       { $$[cmpop] = Absyn.GT(); }
                      | GtE LPAREN RPAREN
-                       { cout << "Reducing <GtE LPAREN RPAREN> to cmpop" << endl; }
+                       { $$[cmpop] = Absyn.GTE(); }
                      | Is LPAREN RPAREN
-                       { cout << "Reducing <Is LPAREN RPAREN> to cmpop" << endl; }
+                       { $$[cmpop] = Absyn.IS(); }
                      | IsNot LPAREN RPAREN
-                       { cout << "Reducing <IsNot LPAREN RPAREN> to cmpop" << endl; }
+                       { $$[cmpop] = Absyn.ISNOT(); }
                      | In LPAREN RPAREN
-                       { cout << "Reducing <In LPAREN RPAREN> to cmpop" << endl; }
+                       { $$[cmpop] = Absyn.IN(); }
                      | NotIn LPAREN RPAREN
-                       { cout << "Reducing <NotIn LPAREN RPAREN> to cmpop" << endl; }
+                       { $$[cmpop] = Absyn.NOTIN(); }
 ;
 comprehension        : comprehension_ LPAREN expr COMMA expr COMMA LBRACE listof_expr RBRACE RPAREN
-                       { cout << "Reducing <comprehension_ LPAREN expr COMMA expr COMMA LBRACE listof_expr RBRACE RPAREN> to comprehension" << endl; }
+                       { $$[comprehension] = Absyn.COMPREHENSION($3[target], $5[iter], $8[ifs]); }
 ;
 excepthandler        : ExceptHandler LPAREN optional_expr COMMA optional_identifier COMMA LBRACE listof_stmt RBRACE RPAREN
-                       { cout << "Reducing <ExceptHandler LPAREN optional_expr COMMA optional_identifier COMMA LBRACE listof_stmt RBRACE RPAREN> to excepthandler" << endl; }
+                       { $$[excepthandler] = Absyn.EXCEPTHANDLER($3[type], $5[name], $8[body]); }
 ;
 arguments            : arguments_ LPAREN LBRACE listof_arg RBRACE COMMA optional_arg COMMA LBRACE listof_arg RBRACE COMMA LBRACE listof_expr RBRACE COMMA optional_arg COMMA LBRACE listof_expr RBRACE RPAREN
-                       { cout << "Reducing <arguments_ LPAREN LBRACE listof_arg RBRACE COMMA optional_arg COMMA LBRACE listof_arg RBRACE COMMA LBRACE listof_expr RBRACE COMMA optional_arg COMMA LBRACE listof_expr RBRACE RPAREN> to arguments" << endl; }
+                       { $$[arguments] = Absyn.ARGUMENTS($4[args], $7[vararg], $10[kwonlyargs], $14[kw_defaults], $17[kwarg], $20[defaults]); }
 ;
 arg                  : arg_ LPAREN string COMMA optional_expr RPAREN
-                       { cout << "Reducing <arg_ LPAREN string COMMA optional_expr RPAREN> to arg" << endl; }
+                       { $$[arg] = Absyn.ARG($3[argid], $5[annotation]); }
 ;
 keyword              : keyword_ LPAREN string COMMA expr RPAREN
-                       { cout << "Reducing <keyword_ LPAREN string COMMA expr RPAREN> to keyword" << endl; }
+                       { $$[keyword] = Absyn.KEYWORD($3[argid], $5[value]); }
 ;
 alias                : alias_ LPAREN string COMMA optional_identifier RPAREN
-                       { cout << "Reducing <alias_ LPAREN string COMMA optional_identifier RPAREN> to alias" << endl; }
+                       { $$[alias] = Absyn.ALIAS($3[name], $5[asname]); }
 ;
 withitem             : withitem_ LPAREN expr COMMA optional_expr RPAREN
-                       { cout << "Reducing <withitem_ LPAREN expr COMMA optional_expr RPAREN> to withitem" << endl; }
+                       { $$[withitem] = Absyn.WITHITEM($3[context_expr], $5[optional_vars]); }
+;
+singleton            : True
+                       { $$[singleton] = Absyn.TRUE(); }
+                     | False
+                       { $$[singleton] = Absyn.FALSE(); }
+                     | None
+                       { $$[singleton] = Absyn.PYNONE(); }
 ;
 optional_expr        : expr
-                       { cout << "Reducing <expr> to optional_expr" << endl; }
+                       { $$[Option<expr>] = SOME($1); }
                      | None
-                       { cout << "Reducing <None> to optional_expr" << endl; }
+                       { $$[optional_expr] = NONE(); }
 ;
 optional_identifier  : string
-                       { cout << "Reducing <string> to optional_identifier" << endl; }
+                       { $$[Option<identifier>] = SOME($1); }
                      | None
-                       { cout << "Reducing <None> to optional_identifier" << endl; }
+                       { $$[optional_identifier] = NONE(); }
 ;
 optional_object      : object
-                       { cout << "Reducing <object> to optional_object" << endl; }
+                       { $$[Option<object>] = SOME($1); }
                      | None
-                       { cout << "Reducing <None> to optional_object" << endl; }
+                       { $$[optional_object] = NONE(); }
 ;
 optional_arg         : arg
-                       { cout << "Reducing <arg> to optional_arg" << endl; }
+                       { $$[Option<arg>] = SOME($1); }
                      | None
-                       { cout << "Reducing <None> to optional_arg" << endl; }
+                       { $$[optional_arg] = NONE(); }
 ;
 listof_stmt          : stmt COMMA listof_stmt
-                       { cout << "Reducing <stmt COMMA listof_stmt> to listof_stmt" << endl; }
+                       { $$[list<stmt>] = $1::$3; }
                      | stmt
-                       { cout << "Reducing <stmt> to listof_stmt" << endl; }
-                     | /* empty */
-                       { cout << "Reducing </* empty */> to listof_stmt" << endl; }
+                       { $$[list<stmt>] = $1::{}; }
+                     | 
+                       { $$[list<stmt>] = {}; }
 ;
 listof_expr          : expr COMMA listof_expr
-                       { cout << "Reducing <expr COMMA listof_expr> to listof_expr" << endl; }
+                       { $$[list<expr>] = $1::$3; }
                      | expr
-                       { cout << "Reducing <expr> to listof_expr" << endl; }
-                     | /* empty */
-                       { cout << "Reducing </* empty */> to listof_expr" << endl; }
+                       { $$[list<expr>] = $1::{}; }
+                     | 
+                       { $$[list<expr>] = {}; }
 ;
 listof_keyword       : keyword COMMA listof_keyword
-                       { cout << "Reducing <keyword COMMA listof_keyword> to listof_keyword" << endl; }
+                       { $$[list<keyword>] = $1::$3; }
                      | keyword
-                       { cout << "Reducing <keyword> to listof_keyword" << endl; }
-                     | /* empty */
-                       { cout << "Reducing </* empty */> to listof_keyword" << endl; }
+                       { $$[list<keyword>] = $1::{}; }
+                     | 
+                       { $$[list<keyword>] = {}; }
 ;
 listof_withitem      : withitem COMMA listof_withitem
-                       { cout << "Reducing <withitem COMMA listof_withitem> to listof_withitem" << endl; }
+                       { $$[list<withitem>] = $1::$3; }
                      | withitem
-                       { cout << "Reducing <withitem> to listof_withitem" << endl; }
-                     | /* empty */
-                       { cout << "Reducing </* empty */> to listof_withitem" << endl; }
+                       { $$[list<withitem>] = $1::{}; }
+                     | 
+                       { $$[list<withitem>] = {}; }
 ;
 listof_excepthandler : excepthandler COMMA listof_excepthandler
-                       { cout << "Reducing <excepthandler COMMA listof_excepthandler> to listof_excepthandler" << endl; }
+                       { $$[list<excepthandler>] = $1::$3; }
                      | excepthandler
-                       { cout << "Reducing <excepthandler> to listof_excepthandler" << endl; }
-                     | /* empty */
-                       { cout << "Reducing </* empty */> to listof_excepthandler" << endl; }
+                       { $$[list<excepthandler>] = $1::{}; }
+                     | 
+                       { $$[list<excepthandler>] = {}; }
 ;
 listof_alias         : alias COMMA listof_alias
-                       { cout << "Reducing <alias COMMA listof_alias> to listof_alias" << endl; }
+                       { $$[list<alias>] = $1::$3; }
                      | alias
-                       { cout << "Reducing <alias> to listof_alias" << endl; }
-                     | /* empty */
-                       { cout << "Reducing </* empty */> to listof_alias" << endl; }
+                       { $$[list<alias>] = $1::{}; }
+                     | 
+                       { $$[list<alias>] = {}; }
 ;
 listof_identifier    : string COMMA listof_identifier
-                       { cout << "Reducing <string COMMA listof_identifier> to listof_identifier" << endl; }
+                       { $$[list<identifier>] = $1::$3; }
                      | string
-                       { cout << "Reducing <string> to listof_identifier" << endl; }
-                     | /* empty */
-                       { cout << "Reducing </* empty */> to listof_identifier" << endl; }
+                       { $$[list<identifier>] = $1::{}; }
+                     | 
+                       { $$[list<identifier>] = {}; }
 ;
 listof_comprehension : comprehension COMMA listof_comprehension
-                       { cout << "Reducing <comprehension COMMA listof_comprehension> to listof_comprehension" << endl; }
+                       { $$[list<comprehension>] = $1::$3; }
                      | comprehension
-                       { cout << "Reducing <comprehension> to listof_comprehension" << endl; }
-                     | /* empty */
-                       { cout << "Reducing </* empty */> to listof_comprehension" << endl; }
+                       { $$[list<comprehension>] = $1::{}; }
+                     | 
+                       { $$[list<comprehension>] = {}; }
 ;
 listof_cmpop         : cmpop COMMA listof_cmpop
-                       { cout << "Reducing <cmpop COMMA listof_cmpop> to listof_cmpop" << endl; }
+                       { $$[list<cmpop>] = $1::$3; }
                      | cmpop
-                       { cout << "Reducing <cmpop> to listof_cmpop" << endl; }
-                     | /* empty */
-                       { cout << "Reducing </* empty */> to listof_cmpop" << endl; }
+                       { $$[list<cmpop>] = $1::{}; }
+                     | 
+                       { $$[list<cmpop>] = {}; }
 ;
 listof_slice         : slice COMMA listof_slice
-                       { cout << "Reducing <slice COMMA listof_slice> to listof_slice" << endl; }
+                       { $$[list<slice>] = $1::$3; }
                      | slice
-                       { cout << "Reducing <slice> to listof_slice" << endl; }
-                     | /* empty */
-                       { cout << "Reducing </* empty */> to listof_slice" << endl; }
+                       { $$[list<slice>] = $1::{}; }
+                     | 
+                       { $$[list<slice>] = {}; }
 ;
 listof_arg           : arg COMMA listof_arg
-                       { cout << "Reducing <arg COMMA listof_arg> to listof_arg" << endl; }
+                       { $$[list<arg>] = $1::$3; }
                      | arg
-                       { cout << "Reducing <arg> to listof_arg" << endl; }
-                     | /* empty */
-                       { cout << "Reducing </* empty */> to listof_arg" << endl; }
+                       { $$[list<arg>] = $1::{}; }
+                     | 
+                       { $$[list<arg>] = {}; }
 ;
