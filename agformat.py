@@ -93,10 +93,11 @@ if __name__ == "__main__":
                 i = 0
                 constructorparams = []
                 if head.startswith("optional_"):
+                    semanticRule = "$$[Option<"+head[9:]+">] = %s;"
                     if pn == 0:
-                        semanticRule = "$$[Option<"+head[9:]+">] = SOME($1);"
+                        semanticRule %= "SOME($1)"
                     else:
-                        semanticRule = "$$["+head+"] = NONE();"
+                        semanticRule %= "NONE"
                 elif head.startswith("listof_"):
                     semanticRule = "$$[list<"+head[7:]+">] = %s;"
                     if pn == 0:

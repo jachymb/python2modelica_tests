@@ -208,22 +208,22 @@ singleton            : True
 optional_expr        : expr
                        { $$[Option<expr>] = SOME($1); }
                      | None
-                       { $$[optional_expr] = NONE(); }
+                       { $$[Option<expr>] = NONE; }
 ;
 optional_identifier  : string
                        { $$[Option<identifier>] = SOME($1); }
                      | None
-                       { $$[optional_identifier] = NONE(); }
+                       { $$[Option<identifier>] = NONE; }
 ;
 optional_object      : object
                        { $$[Option<object>] = SOME($1); }
                      | None
-                       { $$[optional_object] = NONE(); }
+                       { $$[Option<object>] = NONE; }
 ;
 optional_arg         : arg
                        { $$[Option<arg>] = SOME($1); }
                      | None
-                       { $$[optional_arg] = NONE(); }
+                       { $$[Option<arg>] = NONE; }
 ;
 listof_stmt          : stmt COMMA listof_stmt
                        { $$[list<stmt>] = $1::$3; }
