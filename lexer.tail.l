@@ -1,9 +1,9 @@
 
 [ \n\t\r\f]+  ;
 
-{object}        return object;
+{object}        return OBJECT;
 
-%"\'(\\.|[^'])*\'" return string;
+%"\'(\\.|[^'])*\'" return STRING;
 
 "'"	     {
 		BEGIN(pyast_string) keepBuffer;

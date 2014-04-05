@@ -2,14 +2,24 @@
 # This script formats the grammar to better readable form and generates list of tokens
 import sys
 
-SPECIALTOKENS = {"LPAREN": '(', "RPAREN": ')', "COMMA": ",", "LBRACE": '[', "RBRACE": ']̈́'}
+SPECIALTOKENS = {"LPAREN": '(', "RPAREN": ')', "COMMA": ",", "LBRACE": '[', "RBRACE": ']'}
 
+
+# Changes to grammar
+# Name conflicts:
+#   operator -> arithmeticop
+# Added singleton as nonterminal instead token
+# bytes changed to B STRING
+# identifier changed to STRINg
+#
+# Tokens that have conflicting names with nonterminals
+# have added trailing underscore to distinguish them.
 GRAMMAR_PYTHON = \
 [('mod', [
             ['Module', 'LPAREN', 'LBRACE', 'listof_stmt', 'RBRACE', 'RPAREN']]),
  ('stmt', [
-            ['FunctionDef', 'LPAREN', 'string', 'COMMA', 'arguments', 'COMMA', 'LBRACE', 'listof_stmt', 'RBRACE', 'COMMA', 'LBRACE', 'listof_expr', 'RBRACE', 'COMMA', 'optional_expr', 'RPAREN'], 
-            ['ClassDef', 'LPAREN', 'string', 'COMMA', 'LBRACE', 'listof_expr', 'RBRACE', 'COMMA', 'LBRACE', 'listof_keyword', 'RBRACE', 'COMMA', 'optional_expr', 'COMMA', 'optional_expr', 'COMMA', 'LBRACE', 'listof_stmt', 'RBRACE', 'COMMA', 'LBRACE', 'listof_expr', 'RBRACE', 'RPAREN'], 
+            ['FunctionDef', 'LPAREN', 'STRING', 'COMMA', 'arguments', 'COMMA', 'LBRACE', 'listof_stmt', 'RBRACE', 'COMMA', 'LBRACE', 'listof_expr', 'RBRACE', 'COMMA', 'optional_expr', 'RPAREN'], 
+            ['ClassDef', 'LPAREN', 'STRING', 'COMMA', 'LBRACE', 'listof_expr', 'RBRACE', 'COMMA', 'LBRACE', 'listof_keyword', 'RBRACE', 'COMMA', 'optional_expr', 'COMMA', 'optional_expr', 'COMMA', 'LBRACE', 'listof_stmt', 'RBRACE', 'COMMA', 'LBRACE', 'listof_expr', 'RBRACE', 'RPAREN'], 
             ['Return', 'LPAREN', 'optional_expr', 'RPAREN'], 
             ['Delete', 'LPAREN', 'LBRACE', 'listof_expr', 'RBRACE', 'RPAREN'], 
             ['Assign', 'LPAREN', 'LBRACE', 'listof_expr', 'RBRACE', 'COMMA', 'expr', 'RPAREN'], 
@@ -45,15 +55,15 @@ GRAMMAR_PYTHON = \
             ['YieldFrom', 'LPAREN', 'expr', 'RPAREN'], 
             ['Compare', 'LPAREN', 'expr', 'COMMA', 'LBRACE', 'listof_cmpop', 'RBRACE', 'COMMA', 'LBRACE', 'listof_expr', 'RBRACE', 'RPAREN'], 
             ['Call', 'LPAREN', 'expr', 'COMMA', 'LBRACE', 'listof_expr', 'RBRACE', 'COMMA', 'LBRACE', 'listof_keyword', 'RBRACE', 'COMMA', 'optional_expr', 'COMMA', 'optional_expr', 'RPAREN'], 
-            ['Num', 'LPAREN', 'object', 'RPAREN'], 
-            ['Str', 'LPAREN', 'string', 'RPAREN'], 
-            ['Bytes', 'LPAREN', 'b', 'string', 'RPAREN'], 
+            ['Num', 'LPAREN', 'OBJECT', 'RPAREN'], 
+            ['Str', 'LPAREN', 'STRING', 'RPAREN'], 
+            ['Bytes', 'LPAREN', 'b', 'STRING', 'RPAREN'], 
             ['NameConstant', 'LPAREN', 'singleton', 'RPAREN'], 
             ['Ellipsis', 'LPAREN', 'RPAREN'], 
-            ['Attribute', 'LPAREN', 'expr', 'COMMA', 'string', 'COMMA', 'expr_context', 'RPAREN'], 
+            ['Attribute', 'LPAREN', 'expr', 'COMMA', 'STRING', 'COMMA', 'expr_context', 'RPAREN'], 
             ['Subscript', 'LPAREN', 'expr', 'COMMA', 'slice', 'COMMA', 'expr_context', 'RPAREN'], 
             ['Starred', 'LPAREN', 'expr', 'COMMA', 'expr_context', 'RPAREN'], 
-            ['Name', 'LPAREN', 'string', 'COMMA', 'expr_context', 'RPAREN'], 
+            ['Name', 'LPAREN', 'STRING', 'COMMA', 'expr_context', 'RPAREN'], 
             ['List', 'LPAREN', 'LBRACE', 'listof_expr', 'RBRACE', 'COMMA', 'expr_context', 'RPAREN'], 
             ['Tuple', 'LPAREN', 'LBRACE', 'listof_expr', 'RBRACE', 'COMMA', 'expr_context', 'RPAREN']]),
  ('expr_context', [
@@ -106,11 +116,11 @@ GRAMMAR_PYTHON = \
  ('arguments', [
             ['arguments_', 'LPAREN', 'LBRACE', 'listof_arg', 'RBRACE', 'COMMA', 'optional_arg', 'COMMA', 'LBRACE', 'listof_arg', 'RBRACE', 'COMMA', 'LBRACE', 'listof_expr', 'RBRACE', 'COMMA', 'optional_arg', 'COMMA', 'LBRACE', 'listof_expr', 'RBRACE', 'RPAREN']]),
  ('arg', [
-            ['arg_', 'LPAREN', 'string', 'COMMA', 'optional_expr', 'RPAREN']]),
+            ['arg_', 'LPAREN', 'STRING', 'COMMA', 'optional_expr', 'RPAREN']]),
  ('keyword', [
-            ['keyword_', 'LPAREN', 'string', 'COMMA', 'expr', 'RPAREN']]),
+            ['keyword_', 'LPAREN', 'STRING', 'COMMA', 'expr', 'RPAREN']]),
  ('alias', [
-            ['alias_', 'LPAREN', 'string', 'COMMA', 'optional_identifier', 'RPAREN']]),
+            ['alias_', 'LPAREN', 'STRING', 'COMMA', 'optional_identifier', 'RPAREN']]),
  ('withitem', [
             ['withitem_', 'LPAREN', 'expr', 'COMMA', 'optional_expr', 'RPAREN']]),
  ('singleton', [
@@ -121,10 +131,10 @@ GRAMMAR_PYTHON = \
             ['expr'], 
             ['None']]),
  ('optional_identifier', [
-            ['string'], 
+            ['STRING'], 
             ['None']]),
  ('optional_object', [
-            ['object'], 
+            ['OBJECT'], 
             ['None']]),
  ('optional_arg', [
             ['arg'], 
@@ -154,8 +164,8 @@ GRAMMAR_PYTHON = \
             ['alias'], 
             []]),
  ('listof_identifier', [
-            ['string', 'COMMA', 'listof_identifier'], 
-            ['string'], 
+            ['STRING', 'COMMA', 'listof_identifier'], 
+            ['STRING'], 
             []]),
  ('listof_comprehension', [
             ['comprehension', 'COMMA', 'listof_comprehension'], 
@@ -175,13 +185,16 @@ GRAMMAR_PYTHON = \
             []])]
 
 OPERATORTYPES =  {"arithmeticop", "cmpop", "unaryop", "boolop"}
-TYPETOKENS = {"object", "string"}
+TYPETOKENS = {"OBJECT", "STRING"}
 
+# Changes in argument names due to conflicts:
+#   annotation -> argannotation
+#   type -> extype
 ARGNAMES = {
     'Add': (),
     'alias_': ('name', 'asname'),
     'And': (),
-    'arg_': ('argid', 'annotation'),
+    'arg_': ('argid', 'argannotation'), 
     'arguments_': ('args', 'vararg', 'kwonlyargs', 'kw_defaults', 'kwarg', 'defaults'),
     'Assert': ('test', 'msg'),
     'Assign': ('targets', 'value'),
@@ -208,7 +221,7 @@ ARGNAMES = {
     'Div': (),
     'Ellipsis': (),
     'Eq': (),
-    'ExceptHandler': ('type', 'name', 'body'),
+    'ExceptHandler': ('extype', 'name', 'body'),
     'Expr': ('value',),
     'ExtSlice': ('dims',),
     'FloorDiv': (),
@@ -272,7 +285,10 @@ ARGNAMES = {
     'YieldFrom': ('value',),
     'Yield': ('value',)}
 
-START = "mod" # GRAMMAR_PYTHON[0][0]
+START = GRAMMAR_PYTHON[0][0] # "mod"
+
+ABSYNHEAD, ABSYNTAIL = "Absyn.head.mo", "Absyn.tail.mo"
+LEXERHEAD, LEXERTAIL = "lexer.head.l", "lexer.tail.l"
 
 def flatten(l):
     """ Makes recursively nested list flat"""
@@ -289,8 +305,7 @@ def converttype(s):
     """ Used for converting tokens which represent constant values 
     from Python AST to Modelica AST types. Also for converting types
     representing lists and options"""
-    if s == "object": return "String"
-    elif s == "string": return "String"
+    if s.upper() in ["OBJECT","STRING","IDENTIFIER"]: return "String"
     elif islistof(s): return "list<%s>" % converttype(s[7:])
     elif isoptional(s): return "Option<%s>" % converttype(s[9:])
     else: return s # No change - general token
@@ -314,7 +329,7 @@ def formatToken(t, constructor = False):
     if t not in SPECIALTOKENS and tokenHeads(t).intersection(OPERATORTYPES) != set():
         t += "_OP"
     # Trailing underscore is not needed in formated tokens
-    elif t.endswith("_"): t = t[:-1]
+    if t.endswith("_"): t = t[:-1]
     return t.upper()
 
 def islistof(x):
@@ -323,8 +338,8 @@ def isoptional(x):
     return x.startswith("optional_")
 
 if __name__ == "__main__":
-    if len(sys.argv) != 3:
-        print("Usage: %s TOKENOUTFILE ABSYNOUTFILE")
+    if len(sys.argv) != 4:
+        print("Usage: %s BISONOUTFILE ABSYNOUTFILE FLEXOUTFILE")
         sys.exit()
 
 
@@ -335,27 +350,55 @@ if __name__ == "__main__":
     nottokens = nottokens.union(TYPETOKENS) # We need to translate TYPETOKENS values to Modelica AST.
 
     tokens = set(flatten(prods)).difference(nottokens)
+    nonspecialtokens = tokens.difference(SPECIALTOKENS)
 
 
-    # Print the head of the parser
-    print("%{\nimport Absyn;\ntype AstTree = Absyn."+START+";\n")
-    print("\n".join([ "type %s = %s;" % z for z in
-            ( (x, (converttype(x) if islistof(x) or isoptional(x) else
-                  ("Absyn."+x)))
-                for x in heads if x != START)]))
-    print("\n%}\n")
+    with open(sys.argv[1], "w") as bofile, \
+            open(sys.argv[2], "w") as aofile, \
+            open(sys.argv[3], "w") as fofile:
 
-    # Print all tokens to the parser
+        # Print the head of the parser
+        print("%{\nimport Absyn;\ntype AstTree = Absyn."+START+";\n", file = bofile)
+        print("\n".join([ "type %s = %s;" % z for z in
+                ( (x, (converttype(x) if islistof(x) or isoptional(x) else
+                      ("Absyn."+x)))
+                    for x in heads if x != START)]),
+                file=bofile)
+        print("\n%}\n", file=bofile)
 
-    for tokset in (TYPETOKENS, SPECIALTOKENS, tokens.difference(SPECIALTOKENS)):
-        print("\n".join(["%token "+t for t in sorted(map(formatToken, tokset))] ))
-        print()
-    print("\n%%\n")
-    
-    
-    with open(sys.argv[2], "w") as aofile:
+        # Print all tokens to the parser
+        for tokset in (TYPETOKENS, SPECIALTOKENS, nonspecialtokens):
+            print("\n".join(["%token "+t for t in sorted(map(formatToken, tokset))] ), file=bofile)
+            print(file=bofile)
+        print("\n%%\n",file=bofile)
+
+        # Print head of lexer file
+        with open(LEXERHEAD) as h:
+            fofile.write(h.read())
+
+        # Print all tokens to the lexer file
+        tokenindent = max(map(len,tokens))+2
+        print("\n".join([('"%s"' % (t if not t.endswith("_") else t[:-1])).ljust(tokenindent) + \
+                                "return %s;" % formatToken(t) for t in \
+                            sorted(map(lambda x: x , nonspecialtokens)) ]),
+                file = fofile)
+        print(file=fofile)
+        print("\n".join([('"%s"' % t).ljust(tokenindent) + ("return %s;" % tn) for tn,t in SPECIALTOKENS.items()]),
+            file=fofile)
+        print(file=fofile)
+
+        # Write tail of lexer file, that finishes the lexer
+        with open(LEXERTAIL) as t:
+            fofile.write(t.read())
+        fofile.close()
+
+        # Print head of the Absyn file
+        with open(ABSYNHEAD) as h:
+            aofile.write(h.read())
+
+        # This cycle generates the main parts of both Absyn and Parser files
         for head, productions in GRAMMAR_PYTHON:
-            def print_a(s):
+            def print_a(s): # Helper function for printing to Absyn.
                 if not (islistof(head) or isoptional(head)):
                     print(s, file=aofile)
 
@@ -410,12 +453,17 @@ if __name__ == "__main__":
                 formatedRule = " ".join([formatToken(p) for p in prods])
                 if pn == 0:
                     print("%s: %s\n%s  { %s }" % 
-                        (head.ljust(indentsize), formatedRule, " "*indentsize, semanticRule))
+                        (head.ljust(indentsize), formatedRule, " "*indentsize, semanticRule),
+                        file=bofile)
                 else:
                     print("%s| %s\n%s  { %s }" % 
-                        (" "*indentsize, formatedRule, " "*indentsize, semanticRule))
+                        (" "*indentsize, formatedRule, " "*indentsize, semanticRule),
+                        file=bofile)
             print_a("end "+head+";\n")
 
-            print()
+            print(file=bofile)
 
-    print("\n%%\n")
+        print("\n%%\n", file=bofile)
+        with open(ABSYNTAIL) as t:
+            aofile.write(t.read())
+

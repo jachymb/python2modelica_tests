@@ -16,4 +16,3 @@ object         ({intpart}|{floatnumber}|{imagnumber})
 
 
 %%
-
