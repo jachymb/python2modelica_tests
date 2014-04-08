@@ -1130,14 +1130,14 @@ public uniontype mod
 end mod;
 
 public uniontype stmt
-	record FUNCTIONDEF
+	record FUNCTIONDEF_ST
 		String	name;
 		arguments	args;
 		list<stmt>	body;
 		list<expr>	decorator_list;
 		Option<expr>	returns;
-	end FUNCTIONDEF;
-	record CLASSDEF
+	end FUNCTIONDEF_ST;
+	record CLASSDEF_ST
 		String	name;
 		list<expr>	bases;
 		list<keyword>	keywords;
@@ -1145,201 +1145,201 @@ public uniontype stmt
 		Option<expr>	kwargs;
 		list<stmt>	body;
 		list<expr>	decorator_list;
-	end CLASSDEF;
-	record RETURN
+	end CLASSDEF_ST;
+	record RETURN_ST
 		Option<expr>	value;
-	end RETURN;
-	record DELETE
+	end RETURN_ST;
+	record DELETE_ST
 		list<expr>	targets;
-	end DELETE;
-	record ASSIGN
+	end DELETE_ST;
+	record ASSIGN_ST
 		list<expr>	targets;
 		expr	value;
-	end ASSIGN;
-	record AUGASSIGN
+	end ASSIGN_ST;
+	record AUGASSIGN_ST
 		expr	target;
 		arithmeticop	op;
 		expr	value;
-	end AUGASSIGN;
-	record FOR
+	end AUGASSIGN_ST;
+	record FOR_ST
 		expr	target;
 		expr	iter;
 		list<stmt>	body;
 		list<stmt>	orelse;
-	end FOR;
-	record WHILE
+	end FOR_ST;
+	record WHILE_ST
 		expr	test;
 		list<stmt>	body;
 		list<stmt>	orelse;
-	end WHILE;
-	record IF
+	end WHILE_ST;
+	record IF_ST
 		expr	test;
 		list<stmt>	body;
 		list<stmt>	orelse;
-	end IF;
-	record WITH
+	end IF_ST;
+	record WITH_ST
 		list<withitem>	items;
 		list<stmt>	body;
-	end WITH;
-	record RAISE
+	end WITH_ST;
+	record RAISE_ST
 		Option<expr>	exc;
 		Option<expr>	cause;
-	end RAISE;
-	record TRY
+	end RAISE_ST;
+	record TRY_ST
 		list<stmt>	body;
 		list<excepthandler>	handlers;
 		list<stmt>	orelse;
 		list<stmt>	finalbody;
-	end TRY;
-	record ASSERT
+	end TRY_ST;
+	record ASSERT_ST
 		expr	test;
 		Option<expr>	msg;
-	end ASSERT;
-	record IMPORT
+	end ASSERT_ST;
+	record IMPORT_ST
 		list<alias>	names;
-	end IMPORT;
-	record IMPORTFROM
+	end IMPORT_ST;
+	record IMPORTFROM_ST
 		Option<String>	module;
 		list<alias>	names;
 		Option<String>	level;
-	end IMPORTFROM;
-	record GLOBAL
+	end IMPORTFROM_ST;
+	record GLOBAL_ST
 		list<String>	names;
-	end GLOBAL;
-	record NONLOCAL
+	end GLOBAL_ST;
+	record NONLOCAL_ST
 		list<String>	names;
-	end NONLOCAL;
-	record EXPR
+	end NONLOCAL_ST;
+	record EXPR_ST
 		expr	value;
-	end EXPR;
-	record PASS
-	end PASS;
-	record BREAK
-	end BREAK;
-	record CONTINUE
-	end CONTINUE;
+	end EXPR_ST;
+	record PASS_ST
+	end PASS_ST;
+	record BREAK_ST
+	end BREAK_ST;
+	record CONTINUE_ST
+	end CONTINUE_ST;
 end stmt;
 
 public uniontype expr
-	record BOOLOP
+	record BOOLOP_EX
 		boolop	op;
 		list<expr>	values;
-	end BOOLOP;
-	record BINOP
+	end BOOLOP_EX;
+	record BINOP_EX
 		expr	left;
 		arithmeticop	op;
 		expr	right;
-	end BINOP;
-	record UNARYOP
+	end BINOP_EX;
+	record UNARYOP_EX
 		unaryop	op;
 		expr	operand;
-	end UNARYOP;
-	record LAMBDA
+	end UNARYOP_EX;
+	record LAMBDA_EX
 		arguments	args;
 		expr	body;
-	end LAMBDA;
-	record IFEXP
+	end LAMBDA_EX;
+	record IFEXP_EX
 		expr	test;
 		expr	body;
 		expr	orelse;
-	end IFEXP;
-	record DICT
+	end IFEXP_EX;
+	record DICT_EX
 		list<expr>	keys;
 		list<expr>	values;
-	end DICT;
-	record SET
+	end DICT_EX;
+	record SET_EX
 		list<expr>	elts;
-	end SET;
-	record LISTCOMP
+	end SET_EX;
+	record LISTCOMP_EX
 		expr	elt;
 		list<comprehension>	generators;
-	end LISTCOMP;
-	record SETCOMP
+	end LISTCOMP_EX;
+	record SETCOMP_EX
 		expr	elt;
 		list<comprehension>	generators;
-	end SETCOMP;
-	record DICTCOMP
+	end SETCOMP_EX;
+	record DICTCOMP_EX
 		expr	key;
 		expr	value;
 		list<comprehension>	generators;
-	end DICTCOMP;
-	record GENERATOREXP
+	end DICTCOMP_EX;
+	record GENERATOREXP_EX
 		expr	elt;
 		list<comprehension>	generators;
-	end GENERATOREXP;
-	record YIELD
+	end GENERATOREXP_EX;
+	record YIELD_EX
 		Option<expr>	value;
-	end YIELD;
-	record YIELDFROM
+	end YIELD_EX;
+	record YIELDFROM_EX
 		expr	value;
-	end YIELDFROM;
-	record COMPARE
+	end YIELDFROM_EX;
+	record COMPARE_EX
 		expr	left;
 		list<cmpop>	ops;
 		list<expr>	comparators;
-	end COMPARE;
-	record CALL
+	end COMPARE_EX;
+	record CALL_EX
 		expr	func;
 		list<expr>	args;
 		list<keyword>	keywords;
 		Option<expr>	starargs;
 		Option<expr>	kwargs;
-	end CALL;
-	record NUM
+	end CALL_EX;
+	record NUM_EX
 		String	n;
-	end NUM;
-	record STR
+	end NUM_EX;
+	record STR_EX
 		String	s;
-	end STR;
-	record BYTES
+	end STR_EX;
+	record BYTES_EX
 		String	s;
-	end BYTES;
-	record NAMECONSTANT
+	end BYTES_EX;
+	record NAMECONSTANT_EX
 		singleton	value;
-	end NAMECONSTANT;
-	record ELLIPSIS
-	end ELLIPSIS;
-	record ATTRIBUTE
+	end NAMECONSTANT_EX;
+	record ELLIPSIS_EX
+	end ELLIPSIS_EX;
+	record ATTRIBUTE_EX
 		expr	value;
 		String	attr;
 		expr_context	ctx;
-	end ATTRIBUTE;
-	record SUBSCRIPT
+	end ATTRIBUTE_EX;
+	record SUBSCRIPT_EX
 		expr	value;
 		slice	subscriptslice;
 		expr_context	ctx;
-	end SUBSCRIPT;
-	record STARRED
+	end SUBSCRIPT_EX;
+	record STARRED_EX
 		expr	value;
 		expr_context	ctx;
-	end STARRED;
-	record NAME
+	end STARRED_EX;
+	record NAME_EX
 		String	id;
 		expr_context	ctx;
-	end NAME;
-	record LIST
+	end NAME_EX;
+	record LIST_EX
 		list<expr>	elts;
 		expr_context	ctx;
-	end LIST;
-	record TUPLE
+	end LIST_EX;
+	record TUPLE_EX
 		list<expr>	elts;
 		expr_context	ctx;
-	end TUPLE;
+	end TUPLE_EX;
 end expr;
 
 public uniontype expr_context
-	record LOAD
-	end LOAD;
-	record STORE
-	end STORE;
-	record DEL
-	end DEL;
-	record AUGLOAD
-	end AUGLOAD;
-	record AUGSTORE
-	end AUGSTORE;
-	record PARAM
-	end PARAM;
+	record LOAD_EC
+	end LOAD_EC;
+	record STORE_EC
+	end STORE_EC;
+	record DEL_EC
+	end DEL_EC;
+	record AUGLOAD_EC
+	end AUGLOAD_EC;
+	record AUGSTORE_EC
+	end AUGSTORE_EC;
+	record PARAM_EC
+	end PARAM_EC;
 end expr_context;
 
 public uniontype slice

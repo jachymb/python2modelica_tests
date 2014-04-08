@@ -14,6 +14,7 @@ SPECIALTOKENS = {"LPAREN": '(', "RPAREN": ')', "COMMA": ",", "LBRACE": '[', "RBR
 #
 # Tokens that have conflicting names with nonterminals
 # have added trailing underscore to distinguish them.
+# Changed names: call, classdef, ifexp, import, list, tuple, param, subscript
 GRAMMAR_PYTHON = \
 [('mod', [
             ['Module', 'LPAREN', 'LBRACE', 'listof_stmt', 'RBRACE', 'RPAREN']]),
@@ -184,8 +185,11 @@ GRAMMAR_PYTHON = \
             ['arg'], 
             []])]
 
-OPERATORTYPES =  {"arithmeticop", "cmpop", "unaryop", "boolop"}
 TYPETOKENS = {"OBJECT", "STRING"}
+
+# POSTFIXES are added to resolve name conflicts
+POSTFIXES = {"expr": "EX", "stmt": "ST", "expr_context": "EC", "arithmeticop": "OP", "cmpop": "OP", "unaryop":"OP", "boolop":"OP"}
+
 
 # Changes in argument names due to conflicts:
 #   annotation -> argannotation
@@ -325,9 +329,11 @@ def formatToken(t, constructor = False):
 
     if constructor and t == "None": return "PYNONE" # To not confuse with Option "NONE"
 
-    # We rename operator tokens to avoid conflicts with Modelica operators
-    if t not in SPECIALTOKENS and tokenHeads(t).intersection(OPERATORTYPES) != set():
-        t += "_OP"
+    # We rename certain constructor tokens to avoid conflicts with Modelica operators
+    th = tokenHeads(t)
+    if constructor and th.intersection(POSTFIXES) != set():
+        assert len(th) == 1
+        t += "_" + POSTFIXES[th.pop()]
     # Trailing underscore is not needed in formated tokens
     if t.endswith("_"): t = t[:-1]
     return t.upper()
@@ -408,13 +414,15 @@ if __name__ == "__main__":
                 constructorparams = []
 
                 if isoptional(head): # Lists
-                    semanticRule = "$$[" + converttype(head) + "] = %s;"
+                    #semanticRule = "$$[" + converttype(head) + "] = %s;"
+                    semanticRule = "$$[" + head + "] = %s;"
                     if pn == 0:
-                        semanticRule %= "SOME($1)"
+                        semanticRule %= "SOME($1["+head[9:]+"])"
                     else:
                         semanticRule %= "NONE()"
                 elif islistof(head): # Options
-                    semanticRule = "$$[" + converttype(head) + "] = %s;"
+                    #semanticRule = "$$[" + converttype(head) + "] = %s;"
+                    semanticRule = "$$[" + head + "] = %s;"
                     if pn == 0:
                         semanticRule %= "$1[%s]::$3[%s]" % (converttype(head[7:]), head)
                     elif pn == 1:
