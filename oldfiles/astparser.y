@@ -1,5 +1,44 @@
 %{
 
+import Absyn;
+type AstTree = Absyn.mod;
+type mod = Absyn.mod;
+type stmt = Absyn.stmt;
+type expr = Absyn.expr;
+type expr_context = Absyn.expr_context;
+type slice = Absyn.slice;
+type boolop = Absyn.boolop;
+type Operator = Absyn.Operator;
+type unaryop = Absyn.unaryop;
+type cmpop = Absyn.cmpop;
+type comprehension = Absyn.comprehension;
+type excepthandler = Absyn.excepthandler;
+type arguments = Absyn.arguments;
+type arg = Absyn.arg;
+type keyword = Absyn.keyword;
+type alias = Absyn.alias;
+type withitem = Absyn.withitem;
+type singleton = Absyn.singleton;
+
+type listof_alias = list<alias>;
+type listof_arg = list<arg>;
+type listof_cmpop = list<cmpop>;
+type listof_comprehension = list<comprehension>;
+type listof_excepthandler = list<excepthandler>;
+type listof_expr = list<expr>;
+type listof_identifier = list<identifier>;
+type listof_keyword = list<keyword>;
+type listof_slice = list<slice>;
+type listof_stmt = list<stmt>;
+type listof_withitem = list<withitem>;
+type optional_arg = Option<arg>;
+type optional_expr = Option<expr>;
+type optional_identifier = Option<identifier>;
+type optional_object = Option<object>;
+constant list<String> lstSemValue3 = {};
+
+
+
 /* This parser works for Python 3.4.0. For earlier versions, the AST
  * library unfortunately produces slightly different tree, but if suppport
  * for older versions of Python is required, it shouldn't be so difficult
@@ -33,8 +72,6 @@
 
 %}
 
-%start mod
-
 %token string
 %token object
 
@@ -47,7 +84,6 @@
 %token RBRACE
 %token COMMA
 %token B
-
 %token Add
 %token And
 %token Assert
@@ -145,7 +181,7 @@
 %%
 mod                  : Module LPAREN LBRACE listof_stmt RBRACE RPAREN
                        { $$[mod] = Absyn.MODULE($4[body]); }
-;
+
 stmt                 : FunctionDef LPAREN string COMMA arguments COMMA LBRACE listof_stmt RBRACE COMMA LBRACE listof_expr RBRACE COMMA optional_expr RPAREN
                        { $$[stmt] = Absyn.FUNCTIONDEF($3[name], $5[args], $8[body], $12[decorator_list], $15[returns]); }
                      | ClassDef LPAREN string COMMA LBRACE listof_expr RBRACE COMMA LBRACE listof_keyword RBRACE COMMA optional_expr COMMA optional_expr COMMA LBRACE listof_stmt RBRACE COMMA LBRACE listof_expr RBRACE RPAREN
@@ -188,7 +224,7 @@ stmt                 : FunctionDef LPAREN string COMMA arguments COMMA LBRACE li
                        { $$[stmt] = Absyn.BREAK(); }
                      | Continue LPAREN RPAREN
                        { $$[stmt] = Absyn.CONTINUE(); }
-;
+
 expr                 : BoolOp LPAREN boolop COMMA LBRACE listof_expr RBRACE RPAREN
                        { $$[expr] = Absyn.BOOLOP($3[op], $6[values]); }
                      | BinOp LPAREN expr COMMA operator COMMA expr RPAREN
@@ -241,7 +277,7 @@ expr                 : BoolOp LPAREN boolop COMMA LBRACE listof_expr RBRACE RPAR
                        { $$[expr] = Absyn.LIST($4[elts], $7[ctx]); }
                      | Tuple LPAREN LBRACE listof_expr RBRACE COMMA expr_context RPAREN
                        { $$[expr] = Absyn.TUPLE($4[elts], $7[ctx]); }
-;
+
 expr_context         : Load LPAREN RPAREN
                        { $$[expr_context] = Absyn.LOAD(); }
                      | Store LPAREN RPAREN
@@ -254,19 +290,19 @@ expr_context         : Load LPAREN RPAREN
                        { $$[expr_context] = Absyn.AUGSTORE(); }
                      | Param LPAREN RPAREN
                        { $$[expr_context] = Absyn.PARAM(); }
-;
+
 slice                : Slice LPAREN optional_expr COMMA optional_expr COMMA optional_expr RPAREN
                        { $$[slice] = Absyn.SLICE($3[lower], $5[upper], $7[step]); }
                      | ExtSlice LPAREN LBRACE listof_slice RBRACE RPAREN
                        { $$[slice] = Absyn.EXTSLICE($4[dims]); }
                      | Index LPAREN expr RPAREN
                        { $$[slice] = Absyn.INDEX($3[value]); }
-;
+
 boolop               : And LPAREN RPAREN
                        { $$[boolop] = Absyn.AND(); }
                      | Or LPAREN RPAREN
                        { $$[boolop] = Absyn.OR(); }
-;
+
 operator             : Add LPAREN RPAREN
                        { $$[operator] = Absyn.ADD(); }
                      | Sub LPAREN RPAREN
@@ -291,7 +327,7 @@ operator             : Add LPAREN RPAREN
                        { $$[operator] = Absyn.BITAND(); }
                      | FloorDiv LPAREN RPAREN
                        { $$[operator] = Absyn.FLOORDIV(); }
-;
+
 unaryop              : Invert LPAREN RPAREN
                        { $$[unaryop] = Absyn.INVERT(); }
                      | Not LPAREN RPAREN
@@ -300,7 +336,7 @@ unaryop              : Invert LPAREN RPAREN
                        { $$[unaryop] = Absyn.UADD(); }
                      | USub LPAREN RPAREN
                        { $$[unaryop] = Absyn.USUB(); }
-;
+
 cmpop                : Eq LPAREN RPAREN
                        { $$[cmpop] = Absyn.EQ(); }
                      | NotEq LPAREN RPAREN
@@ -321,130 +357,130 @@ cmpop                : Eq LPAREN RPAREN
                        { $$[cmpop] = Absyn.IN(); }
                      | NotIn LPAREN RPAREN
                        { $$[cmpop] = Absyn.NOTIN(); }
-;
+
 comprehension        : comprehension_ LPAREN expr COMMA expr COMMA LBRACE listof_expr RBRACE RPAREN
                        { $$[comprehension] = Absyn.COMPREHENSION($3[target], $5[iter], $8[ifs]); }
-;
+
 excepthandler        : ExceptHandler LPAREN optional_expr COMMA optional_identifier COMMA LBRACE listof_stmt RBRACE RPAREN
                        { $$[excepthandler] = Absyn.EXCEPTHANDLER($3[type], $5[name], $8[body]); }
-;
+
 arguments            : arguments_ LPAREN LBRACE listof_arg RBRACE COMMA optional_arg COMMA LBRACE listof_arg RBRACE COMMA LBRACE listof_expr RBRACE COMMA optional_arg COMMA LBRACE listof_expr RBRACE RPAREN
                        { $$[arguments] = Absyn.ARGUMENTS($4[args], $7[vararg], $10[kwonlyargs], $14[kw_defaults], $17[kwarg], $20[defaults]); }
-;
+
 arg                  : arg_ LPAREN string COMMA optional_expr RPAREN
                        { $$[arg] = Absyn.ARG($3[argid], $5[annotation]); }
-;
+
 keyword              : keyword_ LPAREN string COMMA expr RPAREN
                        { $$[keyword] = Absyn.KEYWORD($3[argid], $5[value]); }
-;
+
 alias                : alias_ LPAREN string COMMA optional_identifier RPAREN
                        { $$[alias] = Absyn.ALIAS($3[name], $5[asname]); }
-;
+
 withitem             : withitem_ LPAREN expr COMMA optional_expr RPAREN
                        { $$[withitem] = Absyn.WITHITEM($3[context_expr], $5[optional_vars]); }
-;
+
 singleton            : True
                        { $$[singleton] = Absyn.TRUE(); }
                      | False
                        { $$[singleton] = Absyn.FALSE(); }
                      | None
                        { $$[singleton] = Absyn.PYNONE(); }
-;
+
 optional_expr        : expr
                        { $$[Option<expr>] = SOME($1); }
                      | None
-                       { $$[Option<expr>] = NONE; }
-;
+                       { $$[Option<expr>] = NONE(); }
+
 optional_identifier  : string
                        { $$[Option<identifier>] = SOME($1); }
                      | None
-                       { $$[Option<identifier>] = NONE; }
-;
+                       { $$[Option<identifier>] = NONE(); }
+
 optional_object      : object
                        { $$[Option<object>] = SOME($1); }
                      | None
-                       { $$[Option<object>] = NONE; }
-;
+                       { $$[Option<object>] = NONE(); }
+
 optional_arg         : arg
                        { $$[Option<arg>] = SOME($1); }
                      | None
-                       { $$[Option<arg>] = NONE; }
-;
+                       { $$[Option<arg>] = NONE(); }
+
 listof_stmt          : stmt COMMA listof_stmt
-                       { $$[list<stmt>] = $1::$3; }
+                       { $$[list<stmt>] = $1[stmt]::$3[listof_stmt]; }
                      | stmt
-                       { $$[list<stmt>] = $1::{}; }
+                       { $$[list<stmt>] = $1[stmt]::{}; }
                      | 
                        { $$[list<stmt>] = {}; }
-;
+
 listof_expr          : expr COMMA listof_expr
-                       { $$[list<expr>] = $1::$3; }
+                       { $$[list<expr>] = $1[expr]::$3[listof_expr]; }
                      | expr
-                       { $$[list<expr>] = $1::{}; }
+                       { $$[list<expr>] = $1[expr]::{}; }
                      | 
                        { $$[list<expr>] = {}; }
-;
+
 listof_keyword       : keyword COMMA listof_keyword
-                       { $$[list<keyword>] = $1::$3; }
+                       { $$[list<keyword>] = $1[keyword]::$3[listof_keyword]; }
                      | keyword
-                       { $$[list<keyword>] = $1::{}; }
+                       { $$[list<keyword>] = $1[keyword]::{}; }
                      | 
                        { $$[list<keyword>] = {}; }
-;
+
 listof_withitem      : withitem COMMA listof_withitem
-                       { $$[list<withitem>] = $1::$3; }
+                       { $$[list<withitem>] = $1[withitem]::$3[listof_withitem]; }
                      | withitem
-                       { $$[list<withitem>] = $1::{}; }
+                       { $$[list<withitem>] = $1[withitem]::{}; }
                      | 
                        { $$[list<withitem>] = {}; }
-;
+
 listof_excepthandler : excepthandler COMMA listof_excepthandler
-                       { $$[list<excepthandler>] = $1::$3; }
+                       { $$[list<excepthandler>] = $1[excepthandler]::$3[listof_excepthandler]; }
                      | excepthandler
-                       { $$[list<excepthandler>] = $1::{}; }
+                       { $$[list<excepthandler>] = $1[excepthandler]::{}; }
                      | 
                        { $$[list<excepthandler>] = {}; }
-;
+
 listof_alias         : alias COMMA listof_alias
-                       { $$[list<alias>] = $1::$3; }
+                       { $$[list<alias>] = $1[alias]::$3[listof_alias]; }
                      | alias
-                       { $$[list<alias>] = $1::{}; }
+                       { $$[list<alias>] = $1[alias]::{}; }
                      | 
                        { $$[list<alias>] = {}; }
-;
+
 listof_identifier    : string COMMA listof_identifier
-                       { $$[list<identifier>] = $1::$3; }
+                       { $$[list<identifier>] = $1[identifier]::$3[listof_identifier]; }
                      | string
-                       { $$[list<identifier>] = $1::{}; }
+                       { $$[list<identifier>] = $1[identifier]::{}; }
                      | 
                        { $$[list<identifier>] = {}; }
-;
+
 listof_comprehension : comprehension COMMA listof_comprehension
-                       { $$[list<comprehension>] = $1::$3; }
+                       { $$[list<comprehension>] = $1[comprehension]::$3[listof_comprehension]; }
                      | comprehension
-                       { $$[list<comprehension>] = $1::{}; }
+                       { $$[list<comprehension>] = $1[comprehension]::{}; }
                      | 
                        { $$[list<comprehension>] = {}; }
-;
+
 listof_cmpop         : cmpop COMMA listof_cmpop
-                       { $$[list<cmpop>] = $1::$3; }
+                       { $$[list<cmpop>] = $1[cmpop]::$3[listof_cmpop]; }
                      | cmpop
-                       { $$[list<cmpop>] = $1::{}; }
+                       { $$[list<cmpop>] = $1[cmpop]::{}; }
                      | 
                        { $$[list<cmpop>] = {}; }
-;
+
 listof_slice         : slice COMMA listof_slice
-                       { $$[list<slice>] = $1::$3; }
+                       { $$[list<slice>] = $1[slice]::$3[listof_slice]; }
                      | slice
-                       { $$[list<slice>] = $1::{}; }
+                       { $$[list<slice>] = $1[slice]::{}; }
                      | 
                        { $$[list<slice>] = {}; }
-;
+
 listof_arg           : arg COMMA listof_arg
-                       { $$[list<arg>] = $1::$3; }
+                       { $$[list<arg>] = $1[arg]::$3[listof_arg]; }
                      | arg
-                       { $$[list<arg>] = $1::{}; }
+                       { $$[list<arg>] = $1[arg]::{}; }
                      | 
                        { $$[list<arg>] = {}; }
-;
+
 %%
