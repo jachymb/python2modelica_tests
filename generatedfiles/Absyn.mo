@@ -111,6 +111,11 @@ uniontype Program
     Within       within_ "Within clause" ;
     TimeStamp    globalBuildTimes "";
   end PROGRAM;
+  
+  record MODULE
+    list<stmt>	body;
+  end MODULE;
+  
 end Program;
 
 public
@@ -1122,12 +1127,6 @@ public uniontype Msg "Controls output of error-messages"
 end Msg;
 
 /* python Ast  */
-
-public uniontype mod
-	record MODULE
-		list<stmt>	body;
-	end MODULE;
-end mod;
 
 public uniontype stmt
 	record FUNCTIONDEF_ST
