@@ -45,9 +45,9 @@ type listof_arg = list<arg>;
 %token RBRACE
 %token RPAREN
 
-%token ADD_OP
+%token ADD
 %token ALIAS
-%token AND_OP
+%token AND
 %token ARG
 %token ARGUMENTS
 %token ASSERT
@@ -58,9 +58,9 @@ type listof_arg = list<arg>;
 %token AUGSTORE
 %token B
 %token BINOP
-%token BITAND_OP
-%token BITOR_OP
-%token BITXOR_OP
+%token BITAND
+%token BITOR
+%token BITXOR
 %token BOOLOP
 %token BREAK
 %token BYTES
@@ -73,69 +73,69 @@ type listof_arg = list<arg>;
 %token DELETE
 %token DICT
 %token DICTCOMP
-%token DIV_OP
+%token DIV
 %token ELLIPSIS
-%token EQ_OP
+%token EQ
 %token EXCEPTHANDLER
 %token EXPR
 %token EXTSLICE
 %token FALSE
-%token FLOORDIV_OP
+%token FLOORDIV
 %token FOR
 %token FUNCTIONDEF
 %token GENERATOREXP
 %token GLOBAL
-%token GTE_OP
-%token GT_OP
+%token GT
+%token GTE
 %token IF
 %token IFEXP
 %token IMPORT
 %token IMPORTFROM
+%token IN
 %token INDEX
-%token INVERT_OP
-%token IN_OP
-%token ISNOT_OP
-%token IS_OP
+%token INVERT
+%token IS
+%token ISNOT
 %token KEYWORD
 %token LAMBDA
 %token LIST
 %token LISTCOMP
 %token LOAD
-%token LSHIFT_OP
-%token LTE_OP
-%token LT_OP
+%token LSHIFT
+%token LT
+%token LTE
+%token MOD
 %token MODULE
-%token MOD_OP
-%token MULT_OP
+%token MULT
 %token NAME
 %token NAMECONSTANT
 %token NONE
 %token NONLOCAL
-%token NOTEQ_OP
-%token NOTIN_OP
-%token NOT_OP
+%token NOT
+%token NOTEQ
+%token NOTIN
 %token NUM
-%token OR_OP
+%token OR
 %token PARAM
 %token PASS
-%token POW_OP
+%token POW
 %token RAISE
 %token RETURN
-%token RSHIFT_OP
+%token RSHIFT
 %token SET
 %token SETCOMP
 %token SLICE
 %token STARRED
 %token STORE
 %token STR
+%token SUB
 %token SUBSCRIPT
-%token SUB_OP
 %token TRUE
 %token TRY
 %token TUPLE
-%token UADD_OP
+%token UADD
 %token UNARYOP
-%token USUB_OP
+%token USUB
 %token WHILE
 %token WITH
 %token WITHITEM
@@ -149,113 +149,113 @@ mod                  : MODULE LPAREN LBRACE listof_stmt RBRACE RPAREN
                        { (absyntree)[mod] = Absyn.MODULE($4[listof_stmt]); }
 
 stmt                 : FUNCTIONDEF LPAREN STRING COMMA arguments COMMA LBRACE listof_stmt RBRACE COMMA LBRACE listof_expr RBRACE COMMA optional_expr RPAREN
-                       { $$[stmt] = Absyn.FUNCTIONDEF($3[STRING], $5[arguments], $8[listof_stmt], $12[listof_expr], $15[optional_expr]); }
+                       { $$[stmt] = Absyn.FUNCTIONDEF_ST($3, $5[arguments], $8[listof_stmt], $12[listof_expr], $15[optional_expr]); }
                      | CLASSDEF LPAREN STRING COMMA LBRACE listof_expr RBRACE COMMA LBRACE listof_keyword RBRACE COMMA optional_expr COMMA optional_expr COMMA LBRACE listof_stmt RBRACE COMMA LBRACE listof_expr RBRACE RPAREN
-                       { $$[stmt] = Absyn.CLASSDEF($3[STRING], $6[listof_expr], $10[listof_keyword], $13[optional_expr], $15[optional_expr], $18[listof_stmt], $22[listof_expr]); }
+                       { $$[stmt] = Absyn.CLASSDEF_ST($3, $6[listof_expr], $10[listof_keyword], $13[optional_expr], $15[optional_expr], $18[listof_stmt], $22[listof_expr]); }
                      | RETURN LPAREN optional_expr RPAREN
-                       { $$[stmt] = Absyn.RETURN($3[optional_expr]); }
+                       { $$[stmt] = Absyn.RETURN_ST($3[optional_expr]); }
                      | DELETE LPAREN LBRACE listof_expr RBRACE RPAREN
-                       { $$[stmt] = Absyn.DELETE($4[listof_expr]); }
+                       { $$[stmt] = Absyn.DELETE_ST($4[listof_expr]); }
                      | ASSIGN LPAREN LBRACE listof_expr RBRACE COMMA expr RPAREN
-                       { $$[stmt] = Absyn.ASSIGN($4[listof_expr], $7[expr]); }
+                       { $$[stmt] = Absyn.ASSIGN_ST($4[listof_expr], $7[expr]); }
                      | AUGASSIGN LPAREN expr COMMA arithmeticop COMMA expr RPAREN
-                       { $$[stmt] = Absyn.AUGASSIGN($3[expr], $5[arithmeticop], $7[expr]); }
+                       { $$[stmt] = Absyn.AUGASSIGN_ST($3[expr], $5[arithmeticop], $7[expr]); }
                      | FOR LPAREN expr COMMA expr COMMA LBRACE listof_stmt RBRACE COMMA LBRACE listof_stmt RBRACE RPAREN
-                       { $$[stmt] = Absyn.FOR($3[expr], $5[expr], $8[listof_stmt], $12[listof_stmt]); }
+                       { $$[stmt] = Absyn.FOR_ST($3[expr], $5[expr], $8[listof_stmt], $12[listof_stmt]); }
                      | WHILE LPAREN expr COMMA LBRACE listof_stmt RBRACE COMMA LBRACE listof_stmt RBRACE RPAREN
-                       { $$[stmt] = Absyn.WHILE($3[expr], $6[listof_stmt], $10[listof_stmt]); }
+                       { $$[stmt] = Absyn.WHILE_ST($3[expr], $6[listof_stmt], $10[listof_stmt]); }
                      | IF LPAREN expr COMMA LBRACE listof_stmt RBRACE COMMA LBRACE listof_stmt RBRACE RPAREN
-                       { $$[stmt] = Absyn.IF($3[expr], $6[listof_stmt], $10[listof_stmt]); }
+                       { $$[stmt] = Absyn.IF_ST($3[expr], $6[listof_stmt], $10[listof_stmt]); }
                      | WITH LPAREN LBRACE listof_withitem RBRACE COMMA LBRACE listof_stmt RBRACE RPAREN
-                       { $$[stmt] = Absyn.WITH($4[listof_withitem], $8[listof_stmt]); }
+                       { $$[stmt] = Absyn.WITH_ST($4[listof_withitem], $8[listof_stmt]); }
                      | RAISE LPAREN optional_expr COMMA optional_expr RPAREN
-                       { $$[stmt] = Absyn.RAISE($3[optional_expr], $5[optional_expr]); }
+                       { $$[stmt] = Absyn.RAISE_ST($3[optional_expr], $5[optional_expr]); }
                      | TRY LPAREN LBRACE listof_stmt RBRACE COMMA LBRACE listof_excepthandler RBRACE COMMA LBRACE listof_stmt RBRACE COMMA LBRACE listof_stmt RBRACE RPAREN
-                       { $$[stmt] = Absyn.TRY($4[listof_stmt], $8[listof_excepthandler], $12[listof_stmt], $16[listof_stmt]); }
+                       { $$[stmt] = Absyn.TRY_ST($4[listof_stmt], $8[listof_excepthandler], $12[listof_stmt], $16[listof_stmt]); }
                      | ASSERT LPAREN expr COMMA optional_expr RPAREN
-                       { $$[stmt] = Absyn.ASSERT($3[expr], $5[optional_expr]); }
+                       { $$[stmt] = Absyn.ASSERT_ST($3[expr], $5[optional_expr]); }
                      | IMPORT LPAREN LBRACE listof_alias RBRACE RPAREN
-                       { $$[stmt] = Absyn.IMPORT($4[listof_alias]); }
+                       { $$[stmt] = Absyn.IMPORT_ST($4[listof_alias]); }
                      | IMPORTFROM LPAREN optional_identifier COMMA LBRACE listof_alias RBRACE COMMA optional_object RPAREN
-                       { $$[stmt] = Absyn.IMPORTFROM($3[optional_identifier], $6[listof_alias], $9[optional_object]); }
+                       { $$[stmt] = Absyn.IMPORTFROM_ST($3[optional_identifier], $6[listof_alias], $9[optional_object]); }
                      | GLOBAL LPAREN LBRACE listof_identifier RBRACE RPAREN
-                       { $$[stmt] = Absyn.GLOBAL($4[listof_identifier]); }
+                       { $$[stmt] = Absyn.GLOBAL_ST($4[listof_identifier]); }
                      | NONLOCAL LPAREN LBRACE listof_identifier RBRACE RPAREN
-                       { $$[stmt] = Absyn.NONLOCAL($4[listof_identifier]); }
+                       { $$[stmt] = Absyn.NONLOCAL_ST($4[listof_identifier]); }
                      | EXPR LPAREN expr RPAREN
-                       { $$[stmt] = Absyn.EXPR($3[expr]); }
+                       { $$[stmt] = Absyn.EXPR_ST($3[expr]); }
                      | PASS LPAREN RPAREN
-                       { $$[stmt] = Absyn.PASS(); }
+                       { $$[stmt] = Absyn.PASS_ST(); }
                      | BREAK LPAREN RPAREN
-                       { $$[stmt] = Absyn.BREAK(); }
+                       { $$[stmt] = Absyn.BREAK_ST(); }
                      | CONTINUE LPAREN RPAREN
-                       { $$[stmt] = Absyn.CONTINUE(); }
+                       { $$[stmt] = Absyn.CONTINUE_ST(); }
 
 expr                 : BOOLOP LPAREN boolop COMMA LBRACE listof_expr RBRACE RPAREN
-                       { $$[expr] = Absyn.BOOLOP($3[boolop], $6[listof_expr]); }
+                       { $$[expr] = Absyn.BOOLOP_EX($3[boolop], $6[listof_expr]); }
                      | BINOP LPAREN expr COMMA arithmeticop COMMA expr RPAREN
-                       { $$[expr] = Absyn.BINOP($3[expr], $5[arithmeticop], $7[expr]); }
+                       { $$[expr] = Absyn.BINOP_EX($3[expr], $5[arithmeticop], $7[expr]); }
                      | UNARYOP LPAREN unaryop COMMA expr RPAREN
-                       { $$[expr] = Absyn.UNARYOP($3[unaryop], $5[expr]); }
+                       { $$[expr] = Absyn.UNARYOP_EX($3[unaryop], $5[expr]); }
                      | LAMBDA LPAREN arguments COMMA expr RPAREN
-                       { $$[expr] = Absyn.LAMBDA($3[arguments], $5[expr]); }
+                       { $$[expr] = Absyn.LAMBDA_EX($3[arguments], $5[expr]); }
                      | IFEXP LPAREN expr COMMA expr COMMA expr RPAREN
-                       { $$[expr] = Absyn.IFEXP($3[expr], $5[expr], $7[expr]); }
+                       { $$[expr] = Absyn.IFEXP_EX($3[expr], $5[expr], $7[expr]); }
                      | DICT LPAREN LBRACE listof_expr RBRACE COMMA LBRACE listof_expr RBRACE RPAREN
-                       { $$[expr] = Absyn.DICT($4[listof_expr], $8[listof_expr]); }
+                       { $$[expr] = Absyn.DICT_EX($4[listof_expr], $8[listof_expr]); }
                      | SET LPAREN LBRACE listof_expr RBRACE RPAREN
-                       { $$[expr] = Absyn.SET($4[listof_expr]); }
+                       { $$[expr] = Absyn.SET_EX($4[listof_expr]); }
                      | LISTCOMP LPAREN expr COMMA LBRACE listof_comprehension RBRACE RPAREN
-                       { $$[expr] = Absyn.LISTCOMP($3[expr], $6[listof_comprehension]); }
+                       { $$[expr] = Absyn.LISTCOMP_EX($3[expr], $6[listof_comprehension]); }
                      | SETCOMP LPAREN expr COMMA LBRACE listof_comprehension RBRACE RPAREN
-                       { $$[expr] = Absyn.SETCOMP($3[expr], $6[listof_comprehension]); }
+                       { $$[expr] = Absyn.SETCOMP_EX($3[expr], $6[listof_comprehension]); }
                      | DICTCOMP LPAREN expr COMMA expr COMMA LBRACE listof_comprehension RBRACE RPAREN
-                       { $$[expr] = Absyn.DICTCOMP($3[expr], $5[expr], $8[listof_comprehension]); }
+                       { $$[expr] = Absyn.DICTCOMP_EX($3[expr], $5[expr], $8[listof_comprehension]); }
                      | GENERATOREXP LPAREN expr COMMA LBRACE listof_comprehension RBRACE RPAREN
-                       { $$[expr] = Absyn.GENERATOREXP($3[expr], $6[listof_comprehension]); }
+                       { $$[expr] = Absyn.GENERATOREXP_EX($3[expr], $6[listof_comprehension]); }
                      | YIELD LPAREN optional_expr RPAREN
-                       { $$[expr] = Absyn.YIELD($3[optional_expr]); }
+                       { $$[expr] = Absyn.YIELD_EX($3[optional_expr]); }
                      | YIELDFROM LPAREN expr RPAREN
-                       { $$[expr] = Absyn.YIELDFROM($3[expr]); }
+                       { $$[expr] = Absyn.YIELDFROM_EX($3[expr]); }
                      | COMPARE LPAREN expr COMMA LBRACE listof_cmpop RBRACE COMMA LBRACE listof_expr RBRACE RPAREN
-                       { $$[expr] = Absyn.COMPARE($3[expr], $6[listof_cmpop], $10[listof_expr]); }
+                       { $$[expr] = Absyn.COMPARE_EX($3[expr], $6[listof_cmpop], $10[listof_expr]); }
                      | CALL LPAREN expr COMMA LBRACE listof_expr RBRACE COMMA LBRACE listof_keyword RBRACE COMMA optional_expr COMMA optional_expr RPAREN
-                       { $$[expr] = Absyn.CALL($3[expr], $6[listof_expr], $10[listof_keyword], $13[optional_expr], $15[optional_expr]); }
+                       { $$[expr] = Absyn.CALL_EX($3[expr], $6[listof_expr], $10[listof_keyword], $13[optional_expr], $15[optional_expr]); }
                      | NUM LPAREN OBJECT RPAREN
-                       { $$[expr] = Absyn.NUM($3[OBJECT]); }
+                       { $$[expr] = Absyn.NUM_EX($3); }
                      | STR LPAREN STRING RPAREN
-                       { $$[expr] = Absyn.STR($3[STRING]); }
+                       { $$[expr] = Absyn.STR_EX($3); }
                      | BYTES LPAREN B STRING RPAREN
-                       { $$[expr] = Absyn.BYTES($4[STRING]); }
+                       { $$[expr] = Absyn.BYTES_EX($4); }
                      | NAMECONSTANT LPAREN singleton RPAREN
-                       { $$[expr] = Absyn.NAMECONSTANT($3[singleton]); }
+                       { $$[expr] = Absyn.NAMECONSTANT_EX($3[singleton]); }
                      | ELLIPSIS LPAREN RPAREN
-                       { $$[expr] = Absyn.ELLIPSIS(); }
+                       { $$[expr] = Absyn.ELLIPSIS_EX(); }
                      | ATTRIBUTE LPAREN expr COMMA STRING COMMA expr_context RPAREN
-                       { $$[expr] = Absyn.ATTRIBUTE($3[expr], $5[STRING], $7[expr_context]); }
+                       { $$[expr] = Absyn.ATTRIBUTE_EX($3[expr], $5, $7[expr_context]); }
                      | SUBSCRIPT LPAREN expr COMMA slice COMMA expr_context RPAREN
-                       { $$[expr] = Absyn.SUBSCRIPT($3[expr], $5[slice], $7[expr_context]); }
+                       { $$[expr] = Absyn.SUBSCRIPT_EX($3[expr], $5[slice], $7[expr_context]); }
                      | STARRED LPAREN expr COMMA expr_context RPAREN
-                       { $$[expr] = Absyn.STARRED($3[expr], $5[expr_context]); }
+                       { $$[expr] = Absyn.STARRED_EX($3[expr], $5[expr_context]); }
                      | NAME LPAREN STRING COMMA expr_context RPAREN
-                       { $$[expr] = Absyn.NAME($3[STRING], $5[expr_context]); }
+                       { $$[expr] = Absyn.NAME_EX($3, $5[expr_context]); }
                      | LIST LPAREN LBRACE listof_expr RBRACE COMMA expr_context RPAREN
-                       { $$[expr] = Absyn.LIST($4[listof_expr], $7[expr_context]); }
+                       { $$[expr] = Absyn.LIST_EX($4[listof_expr], $7[expr_context]); }
                      | TUPLE LPAREN LBRACE listof_expr RBRACE COMMA expr_context RPAREN
-                       { $$[expr] = Absyn.TUPLE($4[listof_expr], $7[expr_context]); }
+                       { $$[expr] = Absyn.TUPLE_EX($4[listof_expr], $7[expr_context]); }
 
 expr_context         : LOAD LPAREN RPAREN
-                       { $$[expr_context] = Absyn.LOAD(); }
+                       { $$[expr_context] = Absyn.LOAD_EC(); }
                      | STORE LPAREN RPAREN
-                       { $$[expr_context] = Absyn.STORE(); }
+                       { $$[expr_context] = Absyn.STORE_EC(); }
                      | DEL LPAREN RPAREN
-                       { $$[expr_context] = Absyn.DEL(); }
+                       { $$[expr_context] = Absyn.DEL_EC(); }
                      | AUGLOAD LPAREN RPAREN
-                       { $$[expr_context] = Absyn.AUGLOAD(); }
+                       { $$[expr_context] = Absyn.AUGLOAD_EC(); }
                      | AUGSTORE LPAREN RPAREN
-                       { $$[expr_context] = Absyn.AUGSTORE(); }
+                       { $$[expr_context] = Absyn.AUGSTORE_EC(); }
                      | PARAM LPAREN RPAREN
-                       { $$[expr_context] = Absyn.PARAM(); }
+                       { $$[expr_context] = Absyn.PARAM_EC(); }
 
 slice                : SLICE LPAREN optional_expr COMMA optional_expr COMMA optional_expr RPAREN
                        { $$[slice] = Absyn.SLICE($3[optional_expr], $5[optional_expr], $7[optional_expr]); }
@@ -264,64 +264,64 @@ slice                : SLICE LPAREN optional_expr COMMA optional_expr COMMA opti
                      | INDEX LPAREN expr RPAREN
                        { $$[slice] = Absyn.INDEX($3[expr]); }
 
-boolop               : AND_OP LPAREN RPAREN
+boolop               : AND LPAREN RPAREN
                        { $$[boolop] = Absyn.AND_OP(); }
-                     | OR_OP LPAREN RPAREN
+                     | OR LPAREN RPAREN
                        { $$[boolop] = Absyn.OR_OP(); }
 
-arithmeticop         : ADD_OP LPAREN RPAREN
+arithmeticop         : ADD LPAREN RPAREN
                        { $$[arithmeticop] = Absyn.ADD_OP(); }
-                     | SUB_OP LPAREN RPAREN
+                     | SUB LPAREN RPAREN
                        { $$[arithmeticop] = Absyn.SUB_OP(); }
-                     | MULT_OP LPAREN RPAREN
+                     | MULT LPAREN RPAREN
                        { $$[arithmeticop] = Absyn.MULT_OP(); }
-                     | DIV_OP LPAREN RPAREN
+                     | DIV LPAREN RPAREN
                        { $$[arithmeticop] = Absyn.DIV_OP(); }
-                     | MOD_OP LPAREN RPAREN
+                     | MOD LPAREN RPAREN
                        { $$[arithmeticop] = Absyn.MOD_OP(); }
-                     | POW_OP LPAREN RPAREN
+                     | POW LPAREN RPAREN
                        { $$[arithmeticop] = Absyn.POW_OP(); }
-                     | LSHIFT_OP LPAREN RPAREN
+                     | LSHIFT LPAREN RPAREN
                        { $$[arithmeticop] = Absyn.LSHIFT_OP(); }
-                     | RSHIFT_OP LPAREN RPAREN
+                     | RSHIFT LPAREN RPAREN
                        { $$[arithmeticop] = Absyn.RSHIFT_OP(); }
-                     | BITOR_OP LPAREN RPAREN
+                     | BITOR LPAREN RPAREN
                        { $$[arithmeticop] = Absyn.BITOR_OP(); }
-                     | BITXOR_OP LPAREN RPAREN
+                     | BITXOR LPAREN RPAREN
                        { $$[arithmeticop] = Absyn.BITXOR_OP(); }
-                     | BITAND_OP LPAREN RPAREN
+                     | BITAND LPAREN RPAREN
                        { $$[arithmeticop] = Absyn.BITAND_OP(); }
-                     | FLOORDIV_OP LPAREN RPAREN
+                     | FLOORDIV LPAREN RPAREN
                        { $$[arithmeticop] = Absyn.FLOORDIV_OP(); }
 
-unaryop              : INVERT_OP LPAREN RPAREN
+unaryop              : INVERT LPAREN RPAREN
                        { $$[unaryop] = Absyn.INVERT_OP(); }
-                     | NOT_OP LPAREN RPAREN
+                     | NOT LPAREN RPAREN
                        { $$[unaryop] = Absyn.NOT_OP(); }
-                     | UADD_OP LPAREN RPAREN
+                     | UADD LPAREN RPAREN
                        { $$[unaryop] = Absyn.UADD_OP(); }
-                     | USUB_OP LPAREN RPAREN
+                     | USUB LPAREN RPAREN
                        { $$[unaryop] = Absyn.USUB_OP(); }
 
-cmpop                : EQ_OP LPAREN RPAREN
+cmpop                : EQ LPAREN RPAREN
                        { $$[cmpop] = Absyn.EQ_OP(); }
-                     | NOTEQ_OP LPAREN RPAREN
+                     | NOTEQ LPAREN RPAREN
                        { $$[cmpop] = Absyn.NOTEQ_OP(); }
-                     | LT_OP LPAREN RPAREN
+                     | LT LPAREN RPAREN
                        { $$[cmpop] = Absyn.LT_OP(); }
-                     | LTE_OP LPAREN RPAREN
+                     | LTE LPAREN RPAREN
                        { $$[cmpop] = Absyn.LTE_OP(); }
-                     | GT_OP LPAREN RPAREN
+                     | GT LPAREN RPAREN
                        { $$[cmpop] = Absyn.GT_OP(); }
-                     | GTE_OP LPAREN RPAREN
+                     | GTE LPAREN RPAREN
                        { $$[cmpop] = Absyn.GTE_OP(); }
-                     | IS_OP LPAREN RPAREN
+                     | IS LPAREN RPAREN
                        { $$[cmpop] = Absyn.IS_OP(); }
-                     | ISNOT_OP LPAREN RPAREN
+                     | ISNOT LPAREN RPAREN
                        { $$[cmpop] = Absyn.ISNOT_OP(); }
-                     | IN_OP LPAREN RPAREN
+                     | IN LPAREN RPAREN
                        { $$[cmpop] = Absyn.IN_OP(); }
-                     | NOTIN_OP LPAREN RPAREN
+                     | NOTIN LPAREN RPAREN
                        { $$[cmpop] = Absyn.NOTIN_OP(); }
 
 comprehension        : COMPREHENSION LPAREN expr COMMA expr COMMA LBRACE listof_expr RBRACE RPAREN
@@ -334,13 +334,13 @@ arguments            : ARGUMENTS LPAREN LBRACE listof_arg RBRACE COMMA optional_
                        { $$[arguments] = Absyn.ARGUMENTS($4[listof_arg], $7[optional_arg], $10[listof_arg], $14[listof_expr], $17[optional_arg], $20[listof_expr]); }
 
 arg                  : ARG LPAREN STRING COMMA optional_expr RPAREN
-                       { $$[arg] = Absyn.ARG($3[STRING], $5[optional_expr]); }
+                       { $$[arg] = Absyn.ARG($3, $5[optional_expr]); }
 
 keyword              : KEYWORD LPAREN STRING COMMA expr RPAREN
-                       { $$[keyword] = Absyn.KEYWORD($3[STRING], $5[expr]); }
+                       { $$[keyword] = Absyn.KEYWORD($3, $5[expr]); }
 
 alias                : ALIAS LPAREN STRING COMMA optional_identifier RPAREN
-                       { $$[alias] = Absyn.ALIAS($3[STRING], $5[optional_identifier]); }
+                       { $$[alias] = Absyn.ALIAS($3, $5[optional_identifier]); }
 
 withitem             : WITHITEM LPAREN expr COMMA optional_expr RPAREN
                        { $$[withitem] = Absyn.WITHITEM($3[expr], $5[optional_expr]); }
@@ -353,101 +353,101 @@ singleton            : TRUE
                        { $$[singleton] = Absyn.PYNONE(); }
 
 optional_expr        : expr
-                       { $$[Option<expr>] = SOME($1); }
+                       { $$[optional_expr] = SOME($1[expr]); }
                      | NONE
-                       { $$[Option<expr>] = NONE(); }
+                       { $$[optional_expr] = NONE(); }
 
 optional_identifier  : STRING
-                       { $$[Option<String>] = SOME($1); }
+                       { $$[optional_identifier] = SOME($1[identifier]); }
                      | NONE
-                       { $$[Option<String>] = NONE(); }
+                       { $$[optional_identifier] = NONE(); }
 
 optional_object      : OBJECT
-                       { $$[Option<String>] = SOME($1); }
+                       { $$[optional_object] = SOME($1[object]); }
                      | NONE
-                       { $$[Option<String>] = NONE(); }
+                       { $$[optional_object] = NONE(); }
 
 optional_arg         : arg
-                       { $$[Option<arg>] = SOME($1); }
+                       { $$[optional_arg] = SOME($1[arg]); }
                      | NONE
-                       { $$[Option<arg>] = NONE(); }
+                       { $$[optional_arg] = NONE(); }
 
 listof_stmt          : stmt COMMA listof_stmt
-                       { $$[list<stmt>] = $1[stmt]::$3[listof_stmt]; }
+                       { $$[listof_stmt] = $1[stmt]::$3[listof_stmt]; }
                      | stmt
-                       { $$[list<stmt>] = $1[stmt]::{}; }
+                       { $$[listof_stmt] = $1[stmt]::{}; }
                      | 
-                       { $$[list<stmt>] = {}; }
+                       { $$[listof_stmt] = {}; }
 
 listof_expr          : expr COMMA listof_expr
-                       { $$[list<expr>] = $1[expr]::$3[listof_expr]; }
+                       { $$[listof_expr] = $1[expr]::$3[listof_expr]; }
                      | expr
-                       { $$[list<expr>] = $1[expr]::{}; }
+                       { $$[listof_expr] = $1[expr]::{}; }
                      | 
-                       { $$[list<expr>] = {}; }
+                       { $$[listof_expr] = {}; }
 
 listof_keyword       : keyword COMMA listof_keyword
-                       { $$[list<keyword>] = $1[keyword]::$3[listof_keyword]; }
+                       { $$[listof_keyword] = $1[keyword]::$3[listof_keyword]; }
                      | keyword
-                       { $$[list<keyword>] = $1[keyword]::{}; }
+                       { $$[listof_keyword] = $1[keyword]::{}; }
                      | 
-                       { $$[list<keyword>] = {}; }
+                       { $$[listof_keyword] = {}; }
 
 listof_withitem      : withitem COMMA listof_withitem
-                       { $$[list<withitem>] = $1[withitem]::$3[listof_withitem]; }
+                       { $$[listof_withitem] = $1[withitem]::$3[listof_withitem]; }
                      | withitem
-                       { $$[list<withitem>] = $1[withitem]::{}; }
+                       { $$[listof_withitem] = $1[withitem]::{}; }
                      | 
-                       { $$[list<withitem>] = {}; }
+                       { $$[listof_withitem] = {}; }
 
 listof_excepthandler : excepthandler COMMA listof_excepthandler
-                       { $$[list<excepthandler>] = $1[excepthandler]::$3[listof_excepthandler]; }
+                       { $$[listof_excepthandler] = $1[excepthandler]::$3[listof_excepthandler]; }
                      | excepthandler
-                       { $$[list<excepthandler>] = $1[excepthandler]::{}; }
+                       { $$[listof_excepthandler] = $1[excepthandler]::{}; }
                      | 
-                       { $$[list<excepthandler>] = {}; }
+                       { $$[listof_excepthandler] = {}; }
 
 listof_alias         : alias COMMA listof_alias
-                       { $$[list<alias>] = $1[alias]::$3[listof_alias]; }
+                       { $$[listof_alias] = $1[alias]::$3[listof_alias]; }
                      | alias
-                       { $$[list<alias>] = $1[alias]::{}; }
+                       { $$[listof_alias] = $1[alias]::{}; }
                      | 
-                       { $$[list<alias>] = {}; }
+                       { $$[listof_alias] = {}; }
 
 listof_identifier    : STRING COMMA listof_identifier
-                       { $$[list<String>] = $1[String]::$3[listof_identifier]; }
+                       { $$[listof_identifier] = $1::$3[listof_identifier]; }
                      | STRING
-                       { $$[list<String>] = $1[String]::{}; }
+                       { $$[listof_identifier] = $1::{}; }
                      | 
-                       { $$[list<String>] = {}; }
+                       { $$[listof_identifier] = {}; }
 
 listof_comprehension : comprehension COMMA listof_comprehension
-                       { $$[list<comprehension>] = $1[comprehension]::$3[listof_comprehension]; }
+                       { $$[listof_comprehension] = $1[comprehension]::$3[listof_comprehension]; }
                      | comprehension
-                       { $$[list<comprehension>] = $1[comprehension]::{}; }
+                       { $$[listof_comprehension] = $1[comprehension]::{}; }
                      | 
-                       { $$[list<comprehension>] = {}; }
+                       { $$[listof_comprehension] = {}; }
 
 listof_cmpop         : cmpop COMMA listof_cmpop
-                       { $$[list<cmpop>] = $1[cmpop]::$3[listof_cmpop]; }
+                       { $$[listof_cmpop] = $1[cmpop]::$3[listof_cmpop]; }
                      | cmpop
-                       { $$[list<cmpop>] = $1[cmpop]::{}; }
+                       { $$[listof_cmpop] = $1[cmpop]::{}; }
                      | 
-                       { $$[list<cmpop>] = {}; }
+                       { $$[listof_cmpop] = {}; }
 
 listof_slice         : slice COMMA listof_slice
-                       { $$[list<slice>] = $1[slice]::$3[listof_slice]; }
+                       { $$[listof_slice] = $1[slice]::$3[listof_slice]; }
                      | slice
-                       { $$[list<slice>] = $1[slice]::{}; }
+                       { $$[listof_slice] = $1[slice]::{}; }
                      | 
-                       { $$[list<slice>] = {}; }
+                       { $$[listof_slice] = {}; }
 
 listof_arg           : arg COMMA listof_arg
-                       { $$[list<arg>] = $1[arg]::$3[listof_arg]; }
+                       { $$[listof_arg] = $1[arg]::$3[listof_arg]; }
                      | arg
-                       { $$[list<arg>] = $1[arg]::{}; }
+                       { $$[listof_arg] = $1[arg]::{}; }
                      | 
-                       { $$[list<arg>] = {}; }
+                       { $$[listof_arg] = {}; }
 
 
 %%

@@ -420,6 +420,7 @@ if __name__ == "__main__":
                         semanticRule %= "SOME($1["+head[9:]+"])"
                     else:
                         semanticRule %= "NONE()"
+                    semanticRule = semanticRule.replace("[String]","")
                 elif islistof(head): # Options
                     #semanticRule = "$$[" + converttype(head) + "] = %s;"
                     semanticRule = "$$[" + head + "] = %s;"
@@ -429,6 +430,7 @@ if __name__ == "__main__":
                         semanticRule %= "$1[%s]::{}" % converttype(head[7:])
                     else:
                         semanticRule %= "{}"
+                    semanticRule = semanticRule.replace("[String]","")
 
                 else: # Ordinary attributes
 
@@ -449,7 +451,12 @@ if __name__ == "__main__":
                             print_a("\t\tOption<%s>\t%s;" % (converttype(x[9:]), argname))
                         else:
                             print_a("\t\t%s\t%s;" % (converttype(x), argname))
-                        constructorparams.append("$"+str(pi+1)+"["+x+"]")
+
+                        if x not in TYPETOKENS:
+                            constructorparams.append("$"+str(pi+1)+"["+x+"]")
+                        else:
+                            constructorparams.append("$"+str(pi+1))
+
                     print_a("\tend "+recordname+";")
 
                     semanticRule %= ", ".join(constructorparams)
