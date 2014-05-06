@@ -111,6 +111,11 @@ uniontype Program
     Within       within_ "Within clause" ;
     TimeStamp    globalBuildTimes "";
   end PROGRAM;
+  
+  record MODULE
+    list<stmt>	body;
+  end MODULE;
+  
 end Program;
 
 public
